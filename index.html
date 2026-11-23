@@ -58,7 +58,7 @@
     .nav-container {
       max-width: 1080px;
       margin: 0 auto;
-      padding: 0.85rem 1.25rem;
+      padding: 0.75rem 1.25rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -76,6 +76,13 @@
       font-weight: 700;
       font-size: 1.2rem;
       cursor: pointer;
+    }
+
+    .brand-logo {
+      height: 40px;
+      width: auto;
+      border-radius: 10px;
+      object-fit: contain;
     }
 
     .nav-links {
@@ -228,6 +235,16 @@
       text-align: center;
       box-shadow: var(--shadow-soft);
       border: 4px solid #fff;
+    }
+
+    .hero-logo-img {
+      width: 210px;
+      max-width: 100%;
+      max-height: 210px;
+      object-fit: contain;
+      margin: 0 auto 0.75rem;
+      display: block;
+      border-radius: 16px;
     }
 
     .castle-svg {
@@ -486,26 +503,26 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
+      gap: 1.25rem;
       flex-wrap: wrap;
       margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
+      padding-bottom: 1.25rem;
       border-bottom: 1px solid #f0e8ec;
     }
 
     .staff-profile-box {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 1.25rem;
     }
 
     .staff-avatar {
-      width: 56px;
-      height: 56px;
+      width: 96px;
+      height: 96px;
       border-radius: 50%;
       object-fit: cover;
-      border: 3px solid var(--accent-hot);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border: 4px solid var(--accent-hot);
+      box-shadow: 0 6px 16px rgba(232, 93, 125, 0.22);
     }
 
     .booking-item {
@@ -585,7 +602,8 @@
   <header>
     <div class="nav-container">
       <a href="#home" class="brand" onclick="openPage('home'); return false;">
-        <span>🏰</span>
+        <img src="./Logo.png" alt="Logo Nanny Danine" class="brand-logo" onerror="this.style.display='none'; document.getElementById('headerFallbackIcon').style.display='inline';" />
+        <span id="headerFallbackIcon" style="display:none;">🏰</span>
         <span>Nanny Danine</span>
       </a>
       <nav class="nav-links" aria-label="Hoofdmenu">
@@ -608,9 +626,9 @@
             <h1>Nanny Danine</h1>
             <div class="hero-motto">Jouw oppas aan huis</div>
             <p>
-              Hoi! Ik ben Danine (14 jaar) en ik heb al veel ervaring met kinderen[cite: 3].
+              Hoi! Ik ben Danine (14 jaar) en ik heb al veel ervaring met kinderen.
               Met elke oppasbeurt gaat 50% naar mij en 50% naar kankeronderzoek
-              voor mijn opa[cite: 3]. Prijzen beginnen vanaf <strong>€ 1,-</strong>[cite: 3].
+              voor mijn opa. Prijzen beginnen vanaf <strong>€ 1,-</strong>.
             </p>
             <div class="hero-actions">
               <a href="#boeken" class="btn" onclick="openPage('boeken'); return false;">Boek een oppasbeurt</a>
@@ -619,7 +637,8 @@
           </div>
 
           <div class="castle-card">
-            <svg class="castle-svg" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg" aria-label="Pastel blokkenkasteel">
+            <img src="./Logo.png" alt="Logo Nanny Danine" class="hero-logo-img" onerror="this.style.display='none'; document.getElementById('castleFallbackSvg').style.display='block';" />
+            <svg id="castleFallbackSvg" class="castle-svg" style="display:none;" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg" aria-label="Pastel blokkenkasteel">
               <path d="M98 16 L162 16 L168 88 L226 88 L232 164 L248 164 L248 244 L12 244 L12 164 L28 164 L34 88 L92 88 Z"
                     fill="#ffffff" stroke="#ffffff" stroke-width="18" stroke-linejoin="round"/>
               <polygon points="62,22 30,84 94,84" fill="#7fd1c7"/>
@@ -634,7 +653,7 @@
             </svg>
             <div class="castle-title">Nanny Danine</div>
             <div class="castle-sub">Jouw oppas aan huis</div>
-            <div class="castle-split">50% voor mij • 50% voor kankeronderzoek[cite: 3]</div>
+            <div class="castle-split">50% voor mij • 50% voor kankeronderzoek</div>
           </div>
         </div>
       </div>
@@ -643,21 +662,21 @@
         <div class="grid-3">
           <div class="card">
             <h3>50 / 50 voor kankeronderzoek</h3>
-            <p>De helft gaat naar mij en de andere helft naar kankeronderzoek[cite: 3]. Prijs vanaf € 1,-[cite: 3].</p>
+            <p>De helft gaat naar mij en de andere helft naar kankeronderzoek. Prijs vanaf € 1,-.</p>
             <p style="margin-top: 0.75rem;">
               <a href="#over" onclick="openPage('over'); return false;" style="color: var(--accent-hot); font-weight: 700; text-decoration: none;">Meer over de missie →</a>
             </p>
           </div>
           <div class="card">
             <h3>Meertalig</h3>
-            <p>Ik spreek o.a. Nederlands, Engels, Spaans, Duits, IJslands, Japans en ASL[cite: 3].</p>
+            <p>Ik spreek o.a. Nederlands, Engels, Spaans, Duits, IJslands, Japans en ASL.</p>
             <p style="margin-top: 0.75rem;">
               <a href="#over" onclick="openPage('over'); return false;" style="color: var(--accent-hot); font-weight: 700; text-decoration: none;">Bekijk alle talen →</a>
             </p>
           </div>
           <div class="card">
             <h3>Duidelijke tijden</h3>
-            <p>Beschikbaar van maandag t/m zondag, met rekening voor reistijd en donker[cite: 2].</p>
+            <p>Beschikbaar van maandag t/m zondag, met rekening voor reistijd en donker.</p>
             <p style="margin-top: 0.75rem;">
               <a href="#beschikbaarheid" onclick="openPage('beschikbaarheid'); return false;" style="color: var(--accent-hot); font-weight: 700; text-decoration: none;">Bekijk rooster →</a>
             </p>
@@ -672,7 +691,7 @@
         <div class="page-container" style="padding-bottom: 0.5rem;">
           <div class="section-header">
             <h1>Over Nanny Danine</h1>
-            <p>Jouw oppas aan huis — met aandacht voor kinderen en steun voor kankeronderzoek[cite: 3].</p>
+            <p>Jouw oppas aan huis — met aandacht voor kinderen en steun voor kankeronderzoek.</p>
           </div>
         </div>
       </div>
@@ -682,9 +701,9 @@
           <div class="card">
             <h3>50% voor mij, 50% voor kankeronderzoek</h3>
             <p>
-              Hallo, ik ben Danine[cite: 3]. Ik ben 14 jaar en heb al veel ervaring met kinderen[cite: 3].
-              Ik wil graag iets terugdoen voor mijn opa die helaas is overleden aan kanker[cite: 3].
-              Daarom gaat 50% naar mij en 50% naar kankeronderzoek[cite: 3].
+              Hallo, ik ben Danine. Ik ben 14 jaar en heb al veel ervaring met kinderen.
+              Ik wil graag iets terugdoen voor mijn opa die helaas is overleden aan kanker.
+              Daarom gaat 50% naar mij en 50% naar kankeronderzoek.
             </p>
             <div class="split-banner">
               <div class="split-box split-me">
@@ -696,22 +715,22 @@
                 <span>Kankeronderzoek</span>
               </div>
             </div>
-            <div class="price-pill">💰 De prijs begint vanaf € 1,-[cite: 3]</div>
+            <div class="price-pill">💰 De prijs begint vanaf € 1,-</div>
           </div>
 
           <div class="card">
             <h3>Talen &amp; ervaring</h3>
             <p>
               Met veel ervaring met kinderen zorg ik voor een gezellige en vertrouwde
-              oppasbeurt bij jullie thuis[cite: 3].
+              oppasbeurt bij jullie thuis.
             </p>
             <p style="margin-top: 0.85rem;"><strong>Talen die ik spreek:</strong></p>
             <div class="lang-list">
-              <span class="lang-tag">🇳🇱 Nederlands (Moedertaal)[cite: 3]</span>
-              <span class="lang-tag">🇬🇧 Engels (Vloeiend)[cite: 3]</span>
-              <span class="lang-tag">🇪🇸 Spaans (Vloeiend)[cite: 3]</span>
+              <span class="lang-tag">🇳🇱 Nederlands (Moedertaal)</span>
+              <span class="lang-tag">🇬🇧 Engels (Vloeiend)</span>
+              <span class="lang-tag">🇪🇸 Spaans (Vloeiend)</span>
               <span class="lang-tag">🇩🇪 Duits (Beginner)</span>
-              <span class="lang-tag">🇮🇸 IJslands (Beginner)[cite: 3]</span>
+              <span class="lang-tag">🇮🇸 IJslands (Beginner)</span>
               <span class="lang-tag">🇯🇵 Japans (Beginner)</span>
               <span class="lang-tag">🤟 ASL (Beginner)</span>
             </div>
@@ -729,7 +748,7 @@
         <div class="page-container" style="padding-bottom: 0.5rem;">
           <div class="section-header">
             <h1>Beschikbaarheid</h1>
-            <p>Overzicht van de tijden waarop ik beschikbaar ben voor oppas aan huis[cite: 2].</p>
+            <p>Overzicht van de tijden waarop ik beschikbaar ben voor oppas aan huis.</p>
           </div>
         </div>
       </div>
@@ -746,37 +765,37 @@
             <tbody>
               <tr>
                 <td><strong>ma-</strong> (Maandag)</td>
-                <td>15:10 t/m 20:00[cite: 2]</td>
+                <td>15:10 t/m 20:00</td>
               </tr>
               <tr>
                 <td><strong>di-</strong> (Dinsdag)</td>
-                <td>15:10 t/m 20:00[cite: 2]</td>
+                <td>15:10 t/m 20:00</td>
               </tr>
               <tr>
                 <td><strong>wo-</strong> (Woensdag)</td>
-                <td>14:00 t/m 20:00[cite: 2]</td>
+                <td>14:00 t/m 20:00</td>
               </tr>
               <tr>
                 <td><strong>do-</strong> (Donderdag)</td>
-                <td>12:40 t/m 20:00[cite: 2]</td>
+                <td>12:40 t/m 20:00</td>
               </tr>
               <tr>
                 <td><strong>vr-</strong> (Vrijdag)</td>
-                <td>14:10 t/m 20:00[cite: 2]</td>
+                <td>14:10 t/m 20:00</td>
               </tr>
               <tr>
                 <td><strong>za-</strong> (Zaterdag)</td>
-                <td>8:00 t/m 21:00[cite: 2]</td>
+                <td>8:00 t/m 21:00</td>
               </tr>
               <tr>
                 <td><strong>zo-</strong> (Zondag)</td>
-                <td>8:00 t/m 19:00[cite: 2]</td>
+                <td>8:00 t/m 19:00</td>
               </tr>
             </tbody>
           </table>
 
           <div class="note-box">
-            <strong>Belangrijk:</strong> Houd a.u.b. rekening met dat het eerder donker wordt en mijn reistijd[cite: 2].
+            <strong>Belangrijk:</strong> Houd a.u.b. rekening met dat het eerder donker wordt en mijn reistijd.
           </div>
 
           <div style="margin-top: 1.5rem;">
@@ -792,7 +811,7 @@
         <div class="page-container" style="padding-bottom: 0.5rem;">
           <div class="section-header">
             <h1>Book een oppasbeurt</h1>
-            <p>Nanny Danine — jouw oppas aan huis. Vul je gegevens, telefoonnummer en adres in i.v.m. reistijd en het eerder donker worden[cite: 1, 2].</p>
+            <p>Nanny Danine — jouw oppas aan huis. Vul je gegevens, telefoonnummer en adres in i.v.m. reistijd en het eerder donker worden.</p>
           </div>
         </div>
       </div>
@@ -947,7 +966,7 @@
       <a href="#staff" onclick="openPage('staff'); return false;">Staff login</a>
       <a href="#boeken" onclick="openPage('boeken'); return false;">Book</a>
     </div>
-    <p><strong>Nanny Danine</strong> — Jouw oppas aan huis • 50% voor mij, 50% voor kankeronderzoek • Vanaf € 1,-[cite: 3]</p>
+    <p><strong>Nanny Danine</strong> — Jouw oppas aan huis • 50% voor mij, 50% voor kankeronderzoek • Vanaf € 1,-</p>
   </footer>
 
   <script>
