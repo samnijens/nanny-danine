@@ -1,3 +1,4 @@
 # Nanny Danine
 
-The official site of the babysitter Danine
+The official website of babysitter Danine.
+Made exclusively for Danine. Not for public use.
