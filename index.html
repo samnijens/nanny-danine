@@ -439,140 +439,120 @@
       margin: 0 auto;
     }
 
-    .agenda-section {
-      margin-bottom: 1.75rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1.5px solid #f2e8ed;
-    }
-
-    .agenda-header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.85rem;
-    }
-
-    .agenda-header h2 {
-      font-size: 1.35rem;
-    }
-
-    .agenda-hint {
-      font-size: 0.9rem;
-      color: var(--ink-muted);
-    }
-
-    .agenda-table-wrap {
-      overflow-x: auto;
-      border-radius: var(--radius-md);
+    /* KALENDER EN DUUR STYLES */
+    .calendar-wrapper {
+      background: #fffdfd;
       border: 1.5px solid #f0e6eb;
-    }
-
-    .agenda-table {
-      min-width: 680px;
-      margin: 0;
-    }
-
-    .agenda-table th,
-    .agenda-table td {
-      padding: 0.7rem 0.65rem;
-      vertical-align: middle;
-    }
-
-    .day-select-btn {
-      width: 100%;
-      text-align: left;
-      background: #fff6f8;
-      border: 1.5px solid #f4cdd7;
-      color: var(--ink-dark);
-      font-family: 'Fredoka', sans-serif;
-      font-size: 0.98rem;
-      padding: 0.45rem 0.7rem;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .day-select-btn:hover {
-      background: #ffe6ec;
-      border-color: var(--accent-hot);
-    }
-
-    .day-select-btn.is-selected {
-      background: var(--accent-hot);
-      border-color: var(--accent-hot);
-      color: #fff;
-    }
-
-    .slot-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
-
-    .slot-btn {
-      background: #f6f4ff;
-      border: 1.5px solid #dcd8fa;
-      color: var(--ink-dark);
-      font-family: inherit;
-      font-size: 0.82rem;
-      font-weight: 600;
-      padding: 0.3rem 0.65rem;
-      border-radius: 999px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .slot-btn:hover:not(:disabled) {
-      background: #e8faf7;
-      border-color: var(--accent-teal);
-    }
-
-    .slot-btn.is-selected {
-      background: var(--accent-teal);
-      border-color: var(--accent-teal);
-      color: #fff;
-    }
-
-    .slot-btn.is-blocked,
-    .slot-btn:disabled {
-      background: #f2edf0;
-      border-color: #dfd6dc;
-      color: #8f828c;
-      text-decoration: line-through;
-      cursor: not-allowed;
-      opacity: 0.85;
-    }
-
-    .selected-summary {
-      margin-top: 0.8rem;
-      padding: 0.65rem 0.9rem;
-      border-radius: 12px;
-      background: #fff9e6;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--ink-dark);
-    }
-
-    .block-tool-box {
-      background: #fff6f8;
-      border: 1.5px solid #f4cdd7;
       border-radius: var(--radius-md);
-      padding: 1.15rem 1.25rem;
+      padding: 1.25rem;
       margin-bottom: 1.5rem;
     }
 
-    .block-tool-box h3 {
-      font-size: 1.15rem;
-      margin-bottom: 0.65rem;
+    .calendar-nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
     }
 
-    .block-tool-grid {
+    .calendar-month-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.25rem;
+      color: var(--ink-dark);
+    }
+
+    .cal-nav-btn {
+      background: #fff;
+      border: 1.5px solid #e2d8de;
+      border-radius: 999px;
+      padding: 0.35rem 0.85rem;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      color: var(--ink-dark);
+      transition: all 0.15s ease;
+    }
+
+    .cal-nav-btn:hover {
+      background: #fde2e8;
+      border-color: var(--accent-hot);
+      color: var(--accent-hot);
+    }
+
+    .calendar-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 0.75rem;
-      align-items: end;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      text-align: center;
+    }
+
+    .cal-head-day {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--ink-muted);
+      padding: 0.4rem 0;
+    }
+
+    .cal-day-cell {
+      background: #fff;
+      border: 1.5px solid #f0e6eb;
+      border-radius: 12px;
+      padding: 0.6rem 0.2rem;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--ink-dark);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+    }
+
+    .cal-day-cell:hover:not(.is-disabled):not(.empty) {
+      background: #ffe6ec;
+      border-color: var(--accent-hot);
+      color: var(--accent-hot);
+    }
+
+    .cal-day-cell.is-selected {
+      background: var(--accent-hot) !important;
+      border-color: var(--accent-hot) !important;
+      color: #fff !important;
+    }
+
+    .cal-day-cell.is-today {
+      border-color: var(--accent-teal);
+    }
+
+    .cal-day-cell.is-disabled {
+      background: #f9f6f8;
+      border-color: #f0ebed;
+      color: #c4b9c0;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .cal-day-cell.empty {
+      background: transparent;
+      border: none;
+      cursor: default;
+    }
+
+    .duration-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: #e8faf7;
+      border: 1.5px solid var(--block-mint);
+      color: var(--accent-teal);
+      font-weight: 700;
+      font-size: 0.92rem;
+      padding: 0.45rem 0.95rem;
+      border-radius: 999px;
+      margin-top: 0.5rem;
     }
 
     .form-grid {
@@ -947,39 +927,63 @@
         <div class="page-container" style="padding-bottom: 0.5rem;">
           <div class="section-header">
             <h1>Boeken</h1>
-            <p>Nanny Danine — jouw oppas aan huis. Kies een vrije dag of tijdslot in de agenda of vul hieronder je gegevens in.</p>
+            <p>Kies een datum in de kalender en geef aan van hoe laat tot hoe laat je oppas nodig hebt.</p>
           </div>
         </div>
       </div>
 
       <div class="page-container">
         <div class="booking-card">
-          <div class="agenda-section">
-            <div class="agenda-header">
-              <h2>Weekagenda — kies een dag of tijdslot</h2>
-              <span class="agenda-hint">Bezette tijden zijn geblokkeerd en kunnen niet meer worden geboekt</span>
+          
+          <!-- MAANDKALENDER -->
+          <div class="calendar-wrapper">
+            <div class="calendar-nav-bar">
+              <button type="button" class="cal-nav-btn" id="prevMonthBtn">&larr; Vorige</button>
+              <div class="calendar-month-title" id="calMonthTitle">Maand Jaar</div>
+              <button type="button" class="cal-nav-btn" id="nextMonthBtn">Volgende &rarr;</button>
             </div>
-
-            <div class="agenda-table-wrap">
-              <table class="agenda-table" aria-label="Beschikbare dagen en tijdsloten">
-                <thead>
-                  <tr>
-                    <th style="width: 155px;">Dag</th>
-                    <th style="width: 145px;">Beschikbaar</th>
-                    <th>Tijdsloten</th>
-                  </tr>
-                </thead>
-                <tbody id="agendaTableBody"></tbody>
-              </table>
+            
+            <div class="calendar-grid">
+              <div class="cal-head-day">Ma</div>
+              <div class="cal-head-day">Di</div>
+              <div class="cal-head-day">Wo</div>
+              <div class="cal-head-day">Do</div>
+              <div class="cal-head-day">Vr</div>
+              <div class="cal-head-day">Za</div>
+              <div class="cal-head-day">Zo</div>
             </div>
-
-            <div id="agendaSelectionSummary" class="selected-summary">
-              Nog geen dag of tijdslot gekozen — klik in de tabel hierboven of kies hieronder.
-            </div>
+            <div class="calendar-grid" id="calendarDaysGrid" style="margin-top: 6px;"></div>
           </div>
 
           <form id="bookingForm">
             <div class="form-grid">
+              
+              <div class="form-group full">
+                <label for="bookingDateText">Gekozen datum *</label>
+                <input type="text" id="bookingDateText" name="bookingDateText" readonly placeholder="Klik op een datum in de kalender hierboven" style="background:#fff6f8; font-weight:700; color:var(--accent-hot);" required />
+                <input type="hidden" id="selectedIsoDate" name="selectedIsoDate" />
+              </div>
+
+              <div class="form-group">
+                <label for="startTime">Begintijd *</label>
+                <select id="startTime" name="startTime" required>
+                  <option value="">Kies begintijd</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="endTime">Eindtijd *</label>
+                <select id="endTime" name="endTime" required>
+                  <option value="">Kies eindtijd</option>
+                </select>
+              </div>
+
+              <div class="form-group full">
+                <div class="duration-badge" id="durationBadge">
+                  ⏱️ Totale duur: <span id="durationText">Kies een begin- en eindtijd</span>
+                </div>
+              </div>
+
               <div class="form-group">
                 <label for="parentName">Naam ouder / verzorger *</label>
                 <input type="text" id="parentName" name="parentName" required placeholder="Bijv. Sophie Bakker" />
@@ -1003,25 +1007,6 @@
               <div class="form-group full">
                 <label for="address">Straat, huisnummer en postcode *</label>
                 <input type="text" id="address" name="address" required placeholder="Bijv. Kerkstraat 12, 3011 AA" />
-              </div>
-
-              <div class="form-group">
-                <label for="day">Dag *</label>
-                <select id="day" name="day" required>
-                  <option value="">Kies een dag</option>
-                  <option value="Maandag (15:30 tot 20:00)">Maandag (15:30 tot 20:00)</option>
-                  <option value="Dinsdag (15:30 tot 20:00)">Dinsdag (15:30 tot 20:00)</option>
-                  <option value="Woensdag (14:30 tot 20:00)">Woensdag (14:30 tot 20:00)</option>
-                  <option value="Donderdag (13:00 tot 20:00)">Donderdag (13:00 tot 20:00)</option>
-                  <option value="Vrijdag (14:30 tot 20:20)">Vrijdag (14:30 tot 20:20)</option>
-                  <option value="Zaterdag (09:00 tot 19:00)">Zaterdag (09:00 tot 19:00)</option>
-                  <option value="Zondag (09:00 tot 19:00)">Zondag (09:00 tot 19:00)</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="timeSlot">Gewenste tijd *</label>
-                <input type="text" id="timeSlot" name="timeSlot" required placeholder="Bijv. 15:30 - 17:30" />
               </div>
 
               <div class="form-group">
@@ -1065,7 +1050,7 @@
         <div class="page-container" style="padding-bottom: 0.5rem;">
           <div class="section-header">
             <h1>Staff login</h1>
-            <p>Log in met een Firebase staff-account om oppasverzoeken te bekijken en tijden te beheren.</p>
+            <p>Log in met een Firebase staff-account om oppasverzoeken te bekijken en beheren.</p>
           </div>
         </div>
       </div>
@@ -1110,34 +1095,6 @@
             <button type="button" id="staffLogoutBtn" class="btn btn-secondary btn-sm">Uitloggen</button>
           </div>
 
-          <div class="block-tool-box">
-            <h3>Handmatig een tijd blokkeren</h3>
-            <form id="blockSlotForm" class="block-tool-grid">
-              <div class="form-group">
-                <label for="blockDay">Dag</label>
-                <select id="blockDay" required>
-                  <option value="Maandag (15:30 tot 20:00)">Maandag (15:30 tot 20:00)</option>
-                  <option value="Dinsdag (15:30 tot 20:00)">Dinsdag (15:30 tot 20:00)</option>
-                  <option value="Woensdag (14:30 tot 20:00)">Woensdag (14:30 tot 20:00)</option>
-                  <option value="Donderdag (13:00 tot 20:00)">Donderdag (13:00 tot 20:00)</option>
-                  <option value="Vrijdag (14:30 tot 20:20)">Vrijdag (14:30 tot 20:20)</option>
-                  <option value="Zaterdag (09:00 tot 19:00)">Zaterdag (09:00 tot 19:00)</option>
-                  <option value="Zondag (09:00 tot 19:00)">Zondag (09:00 tot 19:00)</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="blockTimeSlot">Tijd (bijv. 15:30 - 17:30)</label>
-                <input type="text" id="blockTimeSlot" required placeholder="15:30 - 17:30" />
-              </div>
-
-              <div class="form-group">
-                <button type="submit" id="blockSlotBtn" class="btn btn-danger">Blokkeer tijd</button>
-              </div>
-            </form>
-            <div id="blockStatusMsg" style="margin-top: 0.6rem; font-size: 0.9rem; font-weight: 600;"></div>
-          </div>
-
           <div id="bookingsList">
             <p style="color: var(--ink-muted);">Verzoeken laden...</p>
           </div>
@@ -1159,188 +1116,170 @@
 
   <script>
     var PAGES = ['home', 'over', 'beschikbaarheid', 'boeken', 'staff'];
+    var DAY_NAMES = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
+    var MONTH_NAMES = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
 
-    var SCHEDULE_DAYS = [
-      {
-        day: 'Maandag',
-        range: '15:30 tot 20:00',
-        optionValue: 'Maandag (15:30 tot 20:00)',
-        slots: ['15:30 - 17:30', '16:00 - 19:00', '17:30 - 20:00']
-      },
-      {
-        day: 'Dinsdag',
-        range: '15:30 tot 20:00',
-        optionValue: 'Dinsdag (15:30 tot 20:00)',
-        slots: ['15:30 - 17:30', '16:00 - 19:00', '17:30 - 20:00']
-      },
-      {
-        day: 'Woensdag',
-        range: '14:30 tot 20:00',
-        optionValue: 'Woensdag (14:30 tot 20:00)',
-        slots: ['14:30 - 17:00', '15:00 - 18:00', '17:00 - 20:00']
-      },
-      {
-        day: 'Donderdag',
-        range: '13:00 tot 20:00',
-        optionValue: 'Donderdag (13:00 tot 20:00)',
-        slots: ['13:00 - 16:00', '14:00 - 17:30', '17:00 - 20:00']
-      },
-      {
-        day: 'Vrijdag',
-        range: '14:30 tot 20:20',
-        optionValue: 'Vrijdag (14:30 tot 20:20)',
-        slots: ['14:30 - 17:30', '15:30 - 18:30', '17:30 - 20:20']
-      },
-      {
-        day: 'Zaterdag',
-        range: '09:00 tot 19:00',
-        optionValue: 'Zaterdag (09:00 tot 19:00)',
-        slots: ['09:00 - 12:30', '12:30 - 16:00', '15:30 - 19:00']
-      },
-      {
-        day: 'Zondag',
-        range: '09:00 tot 19:00',
-        optionValue: 'Zondag (09:00 tot 19:00)',
-        slots: ['09:00 - 12:30', '12:30 - 16:00', '15:30 - 19:00']
-      }
-    ];
+    var DAY_HOURS = {
+      1: { start: '15:30', end: '20:00' }, // Ma
+      2: { start: '15:30', end: '20:00' }, // Di
+      3: { start: '14:30', end: '20:00' }, // Wo
+      4: { start: '13:00', end: '20:00' }, // Do
+      5: { start: '14:30', end: '20:20' }, // Vr
+      6: { start: '09:00', end: '19:00' }, // Za
+      0: { start: '09:00', end: '19:00' }  // Zo
+    };
 
-    var currentBlockedEntries = [];
+    var currentBlockedBookings = [];
+    var calendarSelectedDate = null; 
+    var calViewDate = new Date();
 
     function parseTimeToMinutes(hhmm) {
-      var match = String(hhmm || '').trim().match(/^(\d{1,2}):(\d{2})$/);
-      if (!match) return null;
-      var hours = parseInt(match[1], 10);
-      var mins = parseInt(match[2], 10);
-      if (hours < 0 || hours > 23 || mins < 0 || mins > 59) return null;
-      return hours * 60 + mins;
-    }
-
-    function parseSlotInterval(slotStr) {
-      var parts = String(slotStr || '').split(/\s*(?:-|tot|t\/m)\s*/i);
+      if (!hhmm) return null;
+      var parts = hhmm.split(':');
       if (parts.length < 2) return null;
-      var start = parseTimeToMinutes(parts[0]);
-      var end = parseTimeToMinutes(parts[1]);
-      if (start === null || end === null || end <= start) return null;
-      return { start: start, end: end };
+      return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
     }
 
-    function getDayKey(dayValue) {
-      return String(dayValue || '').split('(')[0].trim().toLowerCase();
+    function formatMinutesToTime(mins) {
+      var h = Math.floor(mins / 60);
+      var m = mins % 60;
+      return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
     }
 
-    function isSlotBlockedOnDay(dayValue, slotStr) {
-      var targetDayKey = getDayKey(dayValue);
-      var targetInterval = parseSlotInterval(slotStr);
-      var normTargetText = String(slotStr || '').trim().toLowerCase();
+    function generateTimeOptions(startStr, endStr) {
+      var startMins = parseTimeToMinutes(startStr);
+      var endMins = parseTimeToMinutes(endStr);
+      var options = [];
 
-      for (var i = 0; i < currentBlockedEntries.length; i++) {
-        var entry = currentBlockedEntries[i];
-        if (getDayKey(entry.day) !== targetDayKey) continue;
-
-        if (targetInterval) {
-          var blockedInterval = parseSlotInterval(entry.timeSlot);
-          if (blockedInterval) {
-            if (targetInterval.start < blockedInterval.end && targetInterval.end > blockedInterval.start) {
-              return true;
-            }
-          }
-        }
-        if (String(entry.timeSlot || '').trim().toLowerCase() === normTargetText) {
-          return true;
-        }
+      for (var m = startMins; m <= endMins; m += 15) {
+        options.push(formatMinutesToTime(m));
       }
-      return false;
+      return options;
     }
 
-    function renderAgendaTable() {
-      var tbody = document.getElementById('agendaTableBody');
-      var daySelect = document.getElementById('day');
-      var timeInput = document.getElementById('timeSlot');
-      var summary = document.getElementById('agendaSelectionSummary');
+    function renderCalendar() {
+      var grid = document.getElementById('calendarDaysGrid');
+      var title = document.getElementById('calMonthTitle');
+      if (!grid || !title) return;
 
-      if (!tbody || !daySelect || !timeInput || !summary) return;
+      var year = calViewDate.getFullYear();
+      var month = calViewDate.getMonth();
+      title.textContent = MONTH_NAMES[month] + ' ' + year;
 
-      var chosenDayOption = daySelect.value;
-      var chosenSlot = timeInput.value.trim();
+      grid.innerHTML = '';
 
-      if (chosenDayOption && chosenSlot && isSlotBlockedOnDay(chosenDayOption, chosenSlot)) {
-        timeInput.value = '';
-        chosenSlot = '';
+      var firstDayIndex = new Date(year, month, 1).getDay();
+      var offset = (firstDayIndex + 6) % 7; 
+      var daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      var today = new Date();
+      today.setHours(0,0,0,0);
+
+      for (var i = 0; i < offset; i++) {
+        var emptyCell = document.createElement('div');
+        emptyCell.className = 'cal-day-cell empty';
+        grid.appendChild(emptyCell);
       }
 
-      tbody.innerHTML = SCHEDULE_DAYS.map(function (item) {
-        var slotsHtml = item.slots.map(function (slot) {
-          var blocked = isSlotBlockedOnDay(item.optionValue, slot);
-          var selected = !blocked && chosenDayOption === item.optionValue && chosenSlot === slot;
-          var cls = 'slot-btn' + (blocked ? ' is-blocked' : '') + (selected ? ' is-selected' : '');
-          var disabledAttr = blocked ? ' disabled title="Dit tijdslot is al bezet"' : '';
-          var label = blocked ? slot + ' (Bezet)' : slot;
+      for (var d = 1; d <= daysInMonth; d++) {
+        var cellDate = new Date(year, month, d);
+        var dateStr = cellDate.toISOString().split('T')[0];
 
-          return (
-            '<button type="button" class="' + cls + '" data-option="' +
-            escapeHtml(item.optionValue) +
-            '" data-slot="' +
-            escapeHtml(slot) +
-            '"' + disabledAttr + '>' +
-            escapeHtml(label) +
-            '</button>'
-          );
-        }).join('');
+        var cell = document.createElement('div');
+        cell.className = 'cal-day-cell';
+        cell.textContent = d;
 
-        var daySelected = chosenDayOption === item.optionValue;
+        if (cellDate.getTime() === today.getTime()) {
+          cell.classList.add('is-today');
+        }
 
-        return (
-          '<tr>' +
-            '<td><button type="button" class="day-select-btn' + (daySelected ? ' is-selected' : '') + '" data-option="' +
-            escapeHtml(item.optionValue) +
-            '">' +
-            escapeHtml(item.day) +
-            '</button></td>' +
-            '<td><strong>' + escapeHtml(item.range) + '</strong></td>' +
-            '<td><div class="slot-list">' + slotsHtml + '</div></td>' +
-          '</tr>'
-        );
-      }).join('');
+        if (cellDate < today) {
+          cell.classList.add('is-disabled');
+        } else {
+          cell.setAttribute('data-date', dateStr);
+          cell.addEventListener('click', function() {
+            var selectedStr = this.getAttribute('data-date');
+            selectCalendarDate(new Date(selectedStr + 'T00:00:00'));
+          });
+        }
 
-      tbody.querySelectorAll('.day-select-btn').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var opt = this.getAttribute('data-option');
-          daySelect.value = opt;
-          if (timeInput.value.trim() && isSlotBlockedOnDay(opt, timeInput.value.trim())) {
-            timeInput.value = '';
-          }
-          renderAgendaTable();
-        });
+        if (calendarSelectedDate && calendarSelectedDate.toISOString().split('T')[0] === dateStr) {
+          cell.classList.add('is-selected');
+        }
+
+        grid.appendChild(cell);
+      }
+    }
+
+    function selectCalendarDate(dateObj) {
+      calendarSelectedDate = dateObj;
+
+      var dayIdx = dateObj.getDay();
+      var dayName = DAY_NAMES[dayIdx];
+      var formattedDate = dayName + ' ' + dateObj.getDate() + ' ' + MONTH_NAMES[dateObj.getMonth()] + ' ' + dateObj.getFullYear();
+      
+      document.getElementById('bookingDateText').value = formattedDate;
+      document.getElementById('selectedIsoDate').value = dateObj.toISOString().split('T')[0];
+
+      updateAvailableTimesForDay(dayIdx);
+      renderCalendar();
+    }
+
+    function updateAvailableTimesForDay(dayIdx) {
+      var startSelect = document.getElementById('startTime');
+      var endSelect = document.getElementById('endTime');
+      
+      startSelect.innerHTML = '<option value="">Kies begintijd</option>';
+      endSelect.innerHTML = '<option value="">Kies eindtijd</option>';
+
+      var hoursInfo = DAY_HOURS[dayIdx];
+      if (!hoursInfo) return;
+
+      var times = generateTimeOptions(hoursInfo.start, hoursInfo.end);
+
+      times.forEach(function(t) {
+        var opt1 = document.createElement('option');
+        opt1.value = t;
+        opt1.textContent = t;
+        startSelect.appendChild(opt1);
+
+        var opt2 = document.createElement('option');
+        opt2.value = t;
+        opt2.textContent = t;
+        endSelect.appendChild(opt2);
       });
 
-      tbody.querySelectorAll('.slot-btn:not(:disabled)').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var opt = this.getAttribute('data-option');
-          var slot = this.getAttribute('data-slot');
-          daySelect.value = opt;
-          timeInput.value = slot;
-          renderAgendaTable();
-          document.getElementById('parentName').focus();
-        });
-      });
-
-      if (chosenDayOption || chosenSlot) {
-        summary.innerHTML =
-          'Geselecteerd: <strong>' +
-          escapeHtml(chosenDayOption || 'Nog geen dag gekozen') +
-          '</strong> • Tijd: <strong>' +
-          escapeHtml(chosenSlot || 'Nog geen tijd ingevuld') +
-          '</strong>';
-      } else {
-        summary.textContent = 'Nog geen dag of tijdslot gekozen — klik in de tabel hierboven of kies hieronder.';
-      }
+      calculateDuration();
     }
 
-    window.setBlockedSlotsFromFirebase = function (entries) {
-      currentBlockedEntries = Array.isArray(entries) ? entries : [];
-      renderAgendaTable();
-    };
+    function calculateDuration() {
+      var startVal = document.getElementById('startTime').value;
+      var endVal = document.getElementById('endTime').value;
+      var durationText = document.getElementById('durationText');
+
+      if (!startVal || !endVal) {
+        durationText.textContent = 'Kies een begin- en eindtijd';
+        return;
+      }
+
+      var startMins = parseTimeToMinutes(startVal);
+      var endMins = parseTimeToMinutes(endVal);
+
+      if (endMins <= startMins) {
+        durationText.textContent = 'Eindtijd moet ná de begintijd liggen!';
+        return;
+      }
+
+      var diff = endMins - startMins;
+      var hours = Math.floor(diff / 60);
+      var mins = diff % 60;
+
+      var text = '';
+      if (hours > 0) text += hours + (hours === 1 ? ' uur' : ' uur');
+      if (mins > 0) text += (hours > 0 ? ' en ' : '') + mins + ' minuten';
+
+      durationText.textContent = text;
+    }
 
     function openPage(pageName) {
       var target = PAGES.indexOf(pageName) !== -1 ? pageName : 'home';
@@ -1382,12 +1321,21 @@
     (function init() {
       var startHash = window.location.hash.replace('#', '');
       openPage(startHash || 'home');
-      renderAgendaTable();
 
-      var daySelect = document.getElementById('day');
-      var timeInput = document.getElementById('timeSlot');
-      if (daySelect) daySelect.addEventListener('change', renderAgendaTable);
-      if (timeInput) timeInput.addEventListener('input', renderAgendaTable);
+      renderCalendar();
+
+      document.getElementById('prevMonthBtn').addEventListener('click', function() {
+        calViewDate.setMonth(calViewDate.getMonth() - 1);
+        renderCalendar();
+      });
+
+      document.getElementById('nextMonthBtn').addEventListener('click', function() {
+        calViewDate.setMonth(calViewDate.getMonth() + 1);
+        renderCalendar();
+      });
+
+      document.getElementById('startTime').addEventListener('change', calculateDuration);
+      document.getElementById('endTime').addEventListener('change', calculateDuration);
     })();
 
     var phoneInput = document.getElementById('phone');
@@ -1428,11 +1376,12 @@
     const db = getDatabase(app);
     const auth = getAuth(app);
 
-    const bookedSlotsRef = ref(db, 'bookedSlots');
-    onValue(bookedSlotsRef, (snapshot) => {
+    let allBookingsList = [];
+    const bookingsRef = ref(db, 'bookings');
+
+    onValue(bookingsRef, (snapshot) => {
       const val = snapshot.val();
-      const list = val ? Object.entries(val).map(([key, item]) => ({ key, ...item })) : [];
-      window.setBlockedSlotsFromFirebase(list);
+      allBookingsList = val ? Object.entries(val).map(([key, item]) => ({ key, ...item })) : [];
     });
 
     const form = document.getElementById('bookingForm');
@@ -1450,21 +1399,42 @@
       const contactInfo = document.getElementById('contactInfo').value.trim();
       const city = document.getElementById('city').value.trim();
       const address = document.getElementById('address').value.trim();
-      const day = document.getElementById('day').value;
-      const timeSlot = document.getElementById('timeSlot').value.trim();
+      const dateText = document.getElementById('bookingDateText').value;
+      const isoDate = document.getElementById('selectedIsoDate').value;
+      const startTime = document.getElementById('startTime').value;
+      const endTime = document.getElementById('endTime').value;
+      const durationText = document.getElementById('durationText').textContent;
       const kids = document.getElementById('kids').value.trim();
       const language = document.getElementById('language').value;
       const notes = document.getElementById('notes').value.trim();
 
-      if (!phone) {
+      if (!isoDate) {
         bookingErrorBox.style.display = 'block';
-        bookingErrorBox.textContent = 'Vul een geldig telefoonnummer in met alleen cijfers.';
+        bookingErrorBox.textContent = 'Selecteer eerst een datum in de kalender.';
         return;
       }
 
-      if (window.isSlotBlockedOnDay(day, timeSlot)) {
+      const reqStart = window.parseTimeToMinutes(startTime);
+      const reqEnd = window.parseTimeToMinutes(endTime);
+
+      if (!reqStart || !reqEnd || reqEnd <= reqStart) {
         bookingErrorBox.style.display = 'block';
-        bookingErrorBox.textContent = 'Deze dag of tijd is helaas al bezet. Kies een ander tijdslot.';
+        bookingErrorBox.textContent = 'Kies een geldige begin- en eindtijd.';
+        return;
+      }
+
+      // Controleer op overlapping met bestaande boekingen op dezelfde datum
+      const conflict = allBookingsList.find(b => {
+        if (b.isoDate !== isoDate) return false;
+        const bStart = window.parseTimeToMinutes(b.startTime);
+        const bEnd = window.parseTimeToMinutes(b.endTime);
+        if (bStart === null || bEnd === null) return false;
+        return (reqStart < bEnd && reqEnd > bStart);
+      });
+
+      if (conflict) {
+        bookingErrorBox.style.display = 'block';
+        bookingErrorBox.textContent = 'Op deze datum is het gekozen tijdsbestek (of een deel daarvan) helaas al bezet.';
         return;
       }
 
@@ -1477,8 +1447,11 @@
         contactInfo,
         city,
         address,
-        day,
-        timeSlot,
+        dateText,
+        isoDate,
+        startTime,
+        endTime,
+        duration: durationText,
         kids,
         language,
         notes,
@@ -1486,20 +1459,13 @@
       };
 
       try {
-        const newBookingRef = await push(ref(db, 'bookings'), payload);
-        await push(bookedSlotsRef, {
-          bookingId: newBookingRef.key,
-          day,
-          timeSlot,
-          createdAt: serverTimestamp()
-        });
-
+        await push(ref(db, 'bookings'), payload);
         confirmationBox.style.display = 'block';
         confirmationBox.innerHTML =
-          'Bedankt, <strong>' + escapeHtml(parentName) + '</strong>! Je aanvraag in <strong>' +
-          escapeHtml(city) + '</strong> voor <strong>' + escapeHtml(day) + '</strong> (' + escapeHtml(timeSlot) + ') is opgeslagen en de tijd is nu gereserveerd.';
+          'Bedankt, <strong>' + escapeHtml(parentName) + '</strong>! Je aanvraag voor <strong>' +
+          escapeHtml(dateText) + '</strong> (' + escapeHtml(startTime) + ' - ' + escapeHtml(endTime) + ', ' + escapeHtml(durationText) + ') is succesvol opgeslagen.';
         form.reset();
-        window.renderAgendaTable();
+        document.getElementById('durationText').textContent = 'Kies een begin- en eindtijd';
       } catch (err) {
         bookingErrorBox.style.display = 'block';
         bookingErrorBox.innerHTML =
@@ -1519,47 +1485,8 @@
     const staffUserLabel = document.getElementById('staffUserLabel');
     const staffAvatar = document.getElementById('staffAvatar');
     const bookingsList = document.getElementById('bookingsList');
-    const blockSlotForm = document.getElementById('blockSlotForm');
-    const blockSlotBtn = document.getElementById('blockSlotBtn');
-    const blockStatusMsg = document.getElementById('blockStatusMsg');
 
     let unsubscribeBookings = null;
-    let latestBookedSlotRecords = [];
-
-    onValue(bookedSlotsRef, (snapshot) => {
-      const val = snapshot.val();
-      latestBookedSlotRecords = val ? Object.entries(val).map(([key, item]) => ({ key, ...item })) : [];
-    });
-
-    blockSlotForm.addEventListener('submit', async function (event) {
-      event.preventDefault();
-      blockStatusMsg.textContent = '';
-
-      const day = document.getElementById('blockDay').value;
-      const timeSlot = document.getElementById('blockTimeSlot').value.trim();
-      if (!timeSlot) return;
-
-      blockSlotBtn.disabled = true;
-      blockSlotBtn.textContent = 'Blokkeren...';
-
-      try {
-        await push(bookedSlotsRef, {
-          day,
-          timeSlot,
-          manualBlock: true,
-          createdAt: serverTimestamp()
-        });
-        blockStatusMsg.style.color = 'var(--accent-teal)';
-        blockStatusMsg.textContent = 'Geblokkeerd: ' + day + ' — ' + timeSlot;
-        document.getElementById('blockTimeSlot').value = '';
-      } catch (err) {
-        blockStatusMsg.style.color = '#8f1d38';
-        blockStatusMsg.textContent = 'Kon tijd niet blokkeren: ' + (err.message || 'fout');
-      } finally {
-        blockSlotBtn.disabled = false;
-        blockSlotBtn.textContent = 'Blokkeer tijd';
-      }
-    });
 
     staffLoginForm.addEventListener('submit', async function (event) {
       event.preventDefault();
@@ -1607,15 +1534,16 @@
         return (
           '<div class="booking-item" data-id="' + escapeHtml(id) + '">' +
             '<div class="booking-item-header">' +
-              '<div><strong>' + escapeHtml(item.parentName) + '</strong> — <span>' + escapeHtml(item.day) + '</span></div>' +
-              '<button type="button" class="btn btn-danger delete-booking-btn" data-id="' + escapeHtml(id) + '" data-day="' + escapeHtml(item.day) + '" data-slot="' + escapeHtml(item.timeSlot) + '">Verwijderen</button>' +
+              '<div><strong>' + escapeHtml(item.parentName) + '</strong> — <span>' + escapeHtml(item.dateText || item.day) + '</span></div>' +
+              '<button type="button" class="btn btn-danger delete-booking-btn" data-id="' + escapeHtml(id) + '">Verwijderen</button>' +
             '</div>' +
             '<div class="booking-meta">' +
               '<div><strong>Telefoon:</strong> ' + escapeHtml(item.phone || 'Niet opgegeven') + '</div>' +
               '<div><strong>E-mail:</strong> ' + escapeHtml(item.contactInfo) + '</div>' +
               '<div><strong>Plaatsnaam:</strong> ' + escapeHtml(item.city) + '</div>' +
               '<div><strong>Adres:</strong> ' + escapeHtml(item.address) + '</div>' +
-              '<div><strong>Tijd:</strong> ' + escapeHtml(item.timeSlot) + '</div>' +
+              '<div><strong>Tijd:</strong> ' + escapeHtml(item.startTime) + ' - ' + escapeHtml(item.endTime) + '</div>' +
+              '<div><strong>Duur:</strong> ' + escapeHtml(item.duration || 'Niet berekend') + '</div>' +
               '<div><strong>Kinderen:</strong> ' + escapeHtml(item.kids) + '</div>' +
               '<div><strong>Taal:</strong> ' + escapeHtml(item.language) + '</div>' +
               '<div><strong>Aangevraagd:</strong> ' + escapeHtml(createdText) + '</div>' +
@@ -1628,24 +1556,12 @@
       bookingsList.querySelectorAll('.delete-booking-btn').forEach((btn) => {
         btn.addEventListener('click', async function () {
           const bookingId = this.getAttribute('data-id');
-          const bookingDay = this.getAttribute('data-day');
-          const bookingSlot = this.getAttribute('data-slot');
           if (!bookingId) return;
 
           this.disabled = true;
           this.textContent = 'Verwijderen...';
           try {
             await remove(ref(db, 'bookings/' + bookingId));
-
-            const matchingSlots = latestBookedSlotRecords.filter((rec) =>
-              rec.bookingId === bookingId ||
-              (window.getDayKey(rec.day) === window.getDayKey(bookingDay) &&
-                String(rec.timeSlot || '').trim().toLowerCase() === String(bookingSlot || '').trim().toLowerCase())
-            );
-
-            for (const slotRec of matchingSlots) {
-              await remove(ref(db, 'bookedSlots/' + slotRec.key));
-            }
           } catch (err) {
             alert('Verwijderen mislukt: ' + (err.message || 'onbekende fout'));
             this.disabled = false;
@@ -1673,7 +1589,6 @@
           staffAvatar.style.display = 'none';
         }
 
-        const bookingsRef = ref(db, 'bookings');
         unsubscribeBookings = onValue(
           bookingsRef,
           (snapshot) => {
