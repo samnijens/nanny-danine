@@ -82,3 +82,835 @@
       display: flex;
       align-items: center;
       gap: 0.5rem 1.1rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a.page-link {
+      text-decoration: none;
+      color: var(--ink-dark);
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .nav-links a.page-link:hover,
+    .nav-links a.page-link.active {
+      background: #ffffff;
+      color: var(--accent-hot);
+      box-shadow: 0 3px 10px rgba(44, 36, 48, 0.06);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      background: var(--accent-hot);
+      color: #fff;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(232, 93, 125, 0.3);
+      transition: transform 0.15s ease, background-color 0.2s ease;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      background: #d6496a;
+    }
+
+    .btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 1.15rem;
+      font-size: 0.98rem;
+    }
+
+    .btn-secondary {
+      background: var(--accent-teal);
+      box-shadow: 0 6px 16px rgba(42, 157, 143, 0.28);
+    }
+
+    .btn-secondary:hover {
+      background: #218377;
+    }
+
+    main {
+      flex: 1;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.is-visible {
+      display: block;
+    }
+
+    .hero {
+      background: linear-gradient(180deg, var(--bg-pink) 0%, #fff1f4 65%, var(--bg-cream) 100%);
+      padding: 3.5rem 1.25rem 3rem;
+    }
+
+    .hero-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #fff;
+      color: var(--accent-hot);
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 0.38rem 0.95rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 12px rgba(44, 36, 48, 0.06);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 4.5vw, 3.3rem);
+      line-height: 1.12;
+      margin-bottom: 0.65rem;
+    }
+
+    .hero-motto {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.3rem;
+      color: var(--accent-hot);
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.08rem;
+      color: var(--ink-muted);
+      margin-bottom: 1.5rem;
+      max-width: 56ch;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+    }
+
+    .castle-card {
+      background: var(--bg-pink);
+      border-radius: var(--radius-lg);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+      border: 4px solid #fff;
+    }
+
+    .castle-svg {
+      width: 210px;
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto 0.75rem;
+      display: block;
+      filter: drop-shadow(0 8px 12px rgba(44, 36, 48, 0.08));
+    }
+
+    .castle-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--ink-dark);
+    }
+
+    .castle-sub {
+      font-weight: 700;
+      color: var(--accent-hot);
+      margin-top: 0.2rem;
+      font-size: 1rem;
+    }
+
+    .castle-split {
+      font-weight: 600;
+      color: var(--ink-dark);
+      margin-top: 0.3rem;
+      font-size: 0.92rem;
+    }
+
+    .sub-hero {
+      background: linear-gradient(180deg, var(--bg-pink) 0%, var(--bg-cream) 100%);
+      padding: 2.5rem 1.25rem 1.5rem;
+    }
+
+    .page-container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3.5rem;
+    }
+
+    .section-header {
+      margin-bottom: 1.75rem;
+    }
+
+    .section-header h1,
+    .section-header h2 {
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      margin-bottom: 0.4rem;
+    }
+
+    .section-header p {
+      color: var(--ink-muted);
+      max-width: 62ch;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--card-white);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(44, 36, 48, 0.05);
+    }
+
+    .card h3 {
+      font-size: 1.35rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .split-banner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .split-box {
+      border-radius: var(--radius-md);
+      padding: 1.15rem;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .split-me {
+      background: #fff0f4;
+      border: 2px solid var(--block-coral);
+    }
+
+    .split-charity {
+      background: #e8faf7;
+      border: 2px solid var(--block-mint);
+    }
+
+    .split-percent {
+      display: block;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 2rem;
+      line-height: 1.1;
+      margin-bottom: 0.25rem;
+    }
+
+    .price-pill {
+      display: inline-block;
+      margin-top: 1rem;
+      background: var(--block-yellow);
+      color: var(--ink-dark);
+      font-weight: 700;
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      font-size: 0.95rem;
+    }
+
+    .lang-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .lang-tag {
+      background: #f3f2ff;
+      color: var(--ink-dark);
+      border: 1.5px solid var(--block-lavender);
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .schedule-wrapper {
+      background: var(--card-white);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-soft);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 420px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid #f0e8ec;
+    }
+
+    th {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.05rem;
+      color: var(--ink-dark);
+      background: #fff6f8;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .note-box {
+      margin-top: 1.25rem;
+      background: #fff9e6;
+      border-left: 5px solid var(--block-yellow);
+      padding: 1rem 1.25rem;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--ink-dark);
+      font-size: 0.95rem;
+    }
+
+    .booking-card {
+      background: var(--card-white);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-soft);
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+
+    input, select, textarea {
+      font-family: inherit;
+      font-size: 0.98rem;
+      padding: 0.7rem 0.85rem;
+      border-radius: 12px;
+      border: 1.5px solid #e2d8de;
+      background: #fffdfd;
+      color: var(--ink-dark);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent-hot);
+    }
+
+    .confirmation {
+      display: none;
+      margin-top: 1.25rem;
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      background: #e8faf7;
+      border: 2px solid var(--block-mint);
+      color: var(--ink-dark);
+      font-weight: 500;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1.25rem;
+      color: var(--ink-muted);
+      font-size: 0.9rem;
+      border-top: 1px solid rgba(44, 36, 48, 0.06);
+      background: #fff;
+    }
+
+    .footer-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.65rem;
+    }
+
+    .footer-nav a {
+      color: var(--ink-dark);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .footer-nav a:hover {
+      color: var(--accent-hot);
+    }
+
+    @media (max-width: 820px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .hero p {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .hero-actions {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="nav-container">
+      <a href="#home" class="brand" onclick="openPage('home'); return false;">
+        <span>🏰</span>
+        <span>Nanny Danine</span>
+      </a>
+      <nav class="nav-links" aria-label="Hoofdmenu">
+        <a href="#home" id="nav-home" class="page-link active" onclick="openPage('home'); return false;">Home</a>
+        <a href="#over" id="nav-over" class="page-link" onclick="openPage('over'); return false;">Over &amp; 50/50</a>
+        <a href="#beschikbaarheid" id="nav-beschikbaarheid" class="page-link" onclick="openPage('beschikbaarheid'); return false;">Beschikbaarheid</a>
+        <a href="#boeken" id="nav-boeken" class="btn btn-sm" onclick="openPage('boeken'); return false;">Book</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- PAGINA 1: HOME -->
+    <section id="page-home" class="page is-visible">
+      <div class="hero">
+        <div class="hero-inner">
+          <div>
+            <span class="badge">🏡 Jouw oppas aan huis</span>
+            <h1>Nanny Danine</h1>
+            <div class="hero-motto">Jouw oppas aan huis</div>
+            <p>
+              Hoi! Ik ben Danine (14 jaar) en ik heb al veel ervaring met kinderen[cite: 3].
+              Met elke oppasbeurt gaat 50% naar mij en 50% naar kankeronderzoek
+              voor mijn opa[cite: 3]. Prijzen beginnen vanaf <strong>€ 1,-</strong>[cite: 3].
+            </p>
+            <div class="hero-actions">
+              <a href="#boeken" class="btn" onclick="openPage('boeken'); return false;">Boek een oppasbeurt</a>
+              <a href="#over" class="btn btn-secondary" onclick="openPage('over'); return false;">Lees meer over mij</a>
+            </div>
+          </div>
+
+          <div class="castle-card">
+            <svg class="castle-svg" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg" aria-label="Pastel blokkenkasteel">
+              <path d="M98 16 L162 16 L168 88 L226 88 L232 164 L248 164 L248 244 L12 244 L12 164 L28 164 L34 88 L92 88 Z"
+                    fill="#ffffff" stroke="#ffffff" stroke-width="18" stroke-linejoin="round"/>
+              <polygon points="62,22 30,84 94,84" fill="#7fd1c7"/>
+              <rect x="28" y="88" width="68" height="68" rx="12" fill="#f792a8"/>
+              <polygon points="130,12 96,84 164,84" fill="#7fd1c7"/>
+              <rect x="96" y="88" width="68" height="68" rx="12" fill="#f792a8"/>
+              <polygon points="198,22 166,84 230,84" fill="#7fd1c7"/>
+              <rect x="164" y="88" width="68" height="68" rx="12" fill="#f792a8"/>
+              <path d="M84 116 H176 V186 H154 A24 24 0 0 0 106 186 H84 Z" fill="#fbe29f"/>
+              <path d="M20 164 H130 V236 H98 A23 23 0 0 0 52 236 H20 Z" fill="#b9b5f5"/>
+              <path d="M130 164 H240 V236 H208 A23 23 0 0 0 162 236 H130 Z" fill="#7fd1c7"/>
+            </svg>
+            <div class="castle-title">Nanny Danine</div>
+            <div class="castle-sub">Jouw oppas aan huis</div>
+            <div class="castle-split">50% voor mij • 50% voor kankeronderzoek[cite: 3]</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-container">
+        <div class="grid-3">
+          <div class="card">
+            <h3>50 / 50 voor kankeronderzoek</h3>
+            <p>De helft gaat naar mij en de andere helft naar kankeronderzoek[cite: 3]. Prijs vanaf € 1,-[cite: 3].</p>
+            <p style="margin-top: 0.75rem;">
+              <a href="#over" onclick="openPage('over'); return false;" style="color: var(--accent-hot); font-weight: 700; text-decoration: none;">Meer over de missie →</a>
+            </p>
+          </div>
+          <div class="card">
+            <h3>4 talen</h3>
+            <p>Ik spreek Nederlands, Engels, Spaans en IJslands[cite: 3].</p>
+            <p style="margin-top: 0.75rem;">
+              <a href="#over" onclick="openPage('over'); return false;" style="color: var(--accent-hot); font-weight: 700; text-decoration: none;">Bekijk mijn achtergrond →</a>
+            </p>
+          </div>
+          <div class="card">
+            <h3>Duidelijke tijden</h3>
+            <p>Beschikbaar van maandag t/m zondag, met rekening voor reistijd en donker[cite: 2].</p>
+            <p style="margin-top: 0.75rem;">
+              <a href="#beschikbaarheid" onclick="openPage('beschikbaarheid'); return false;" style="color: var(--accent-hot); font-weight: 700; text-decoration: none;">Bekijk rooster →</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGINA 2: OVER DANINE & 50/50 -->
+    <section id="page-over" class="page">
+      <div class="sub-hero">
+        <div class="page-container" style="padding-bottom: 0.5rem;">
+          <div class="section-header">
+            <h1>Over Nanny Danine</h1>
+            <p>Jouw oppas aan huis — met aandacht voor kinderen en steun voor kankeronderzoek[cite: 3].</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-container">
+        <div class="grid-2">
+          <div class="card">
+            <h3>50% voor mij, 50% voor kankeronderzoek</h3>
+            <p>
+              Hallo, ik ben Danine[cite: 3]. Ik ben 14 jaar en heb al veel ervaring met kinderen[cite: 3].
+              Ik wil graag iets terugdoen voor mijn opa die helaas is overleden aan kanker[cite: 3].
+              Daarom gaat 50% naar mij en 50% naar kankeronderzoek[cite: 3].
+            </p>
+            <div class="split-banner">
+              <div class="split-box split-me">
+                <span class="split-percent">50%</span>
+                <span>Voor mij</span>
+              </div>
+              <div class="split-box split-charity">
+                <span class="split-percent">50%</span>
+                <span>Kankeronderzoek</span>
+              </div>
+            </div>
+            <div class="price-pill">💰 De prijs begint vanaf € 1,-[cite: 3]</div>
+          </div>
+
+          <div class="card">
+            <h3>Talen &amp; ervaring</h3>
+            <p>
+              Met veel ervaring met kinderen zorg ik voor een gezellige en vertrouwde
+              oppasbeurt bij jullie thuis[cite: 3].
+            </p>
+            <p style="margin-top: 0.85rem;"><strong>Talen die ik spreek:</strong>[cite: 3]</p>
+            <div class="lang-list">
+              <span class="lang-tag">Nederlands</span>
+              <span class="lang-tag">Engels</span>
+              <span class="lang-tag">Spaans</span>
+              <span class="lang-tag">IJslands</span>
+            </div>
+            <div style="margin-top: 1.5rem;">
+              <a href="#boeken" class="btn" onclick="openPage('boeken'); return false;">Direct boeken</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGINA 3: BESCHIKBAARHEID -->
+    <section id="page-beschikbaarheid" class="page">
+      <div class="sub-hero">
+        <div class="page-container" style="padding-bottom: 0.5rem;">
+          <div class="section-header">
+            <h1>Beschikbaarheid</h1>
+            <p>Overzicht van de tijden waarop ik beschikbaar ben voor oppas aan huis[cite: 2].</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-container">
+        <div class="schedule-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Dag</th>
+                <th>Tijden</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>ma-</strong> (Maandag)</td>
+                <td>15:10 t/m 20:00[cite: 2]</td>
+              </tr>
+              <tr>
+                <td><strong>di-</strong> (Dinsdag)</td>
+                <td>15:10 t/m 20:00[cite: 2]</td>
+              </tr>
+              <tr>
+                <td><strong>wo-</strong> (Woensdag)</td>
+                <td>14:00 t/m 20:00[cite: 2]</td>
+              </tr>
+              <tr>
+                <td><strong>do-</strong> (Donderdag)</td>
+                <td>12:40 t/m 20:00[cite: 2]</td>
+              </tr>
+              <tr>
+                <td><strong>vr-</strong> (Vrijdag)</td>
+                <td>14:10 t/m 20:00[cite: 2]</td>
+              </tr>
+              <tr>
+                <td><strong>za-</strong> (Zaterdag)</td>
+                <td>8:00 t/m 21:00[cite: 2]</td>
+              </tr>
+              <tr>
+                <td><strong>zo-</strong> (Zondag)</td>
+                <td>8:00 t/m 19:00[cite: 2]</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="note-box">
+            <strong>Belangrijk:</strong> Houd a.u.b. rekening met dat het eerder donker wordt en mijn reistijd[cite: 2].
+          </div>
+
+          <div style="margin-top: 1.5rem;">
+            <a href="#boeken" class="btn" onclick="openPage('boeken'); return false;">Ga naar boeken</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGINA 4: BOEKEN -->
+    <section id="page-boeken" class="page">
+      <div class="sub-hero">
+        <div class="page-container" style="padding-bottom: 0.5rem;">
+          <div class="section-header">
+            <h1>Book een oppasbeurt</h1>
+            <p>Nanny Danine — jouw oppas aan huis. Houd rekening met reistijd en het eerder donker worden[cite: 1, 2].</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-container">
+        <div class="booking-card">
+          <form id="bookingForm">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="parentName">Naam ouder / verzorger *</label>
+                <input type="text" id="parentName" name="parentName" required placeholder="Bijv. Sophie Bakker" />
+              </div>
+
+              <div class="form-group">
+                <label for="contactInfo">Telefoonnummer of e-mail *</label>
+                <input type="text" id="contactInfo" name="contactInfo" required placeholder="Bijv. 06-12345678 of naam@voorbeeld.nl" />
+              </div>
+
+              <div class="form-group">
+                <label for="day">Dag *</label>
+                <select id="day" name="day" required>
+                  <option value="">Kies een dag</option>
+                  <option value="ma- (15:10 t/m 20:00)">ma- (15:10 t/m 20:00)</option>
+                  <option value="di- (15:10 t/m 20:00)">di- (15:10 t/m 20:00)</option>
+                  <option value="wo- (14:00 t/m 20:00)">wo- (14:00 t/m 20:00)</option>
+                  <option value="do- (12:40 t/m 20:00)">do- (12:40 t/m 20:00)</option>
+                  <option value="vr- (14:10 t/m 20:00)">vr- (14:10 t/m 20:00)</option>
+                  <option value="za- (8:00 t/m 21:00)">za- (8:00 t/m 21:00)</option>
+                  <option value="zo- (8:00 t/m 19:00)">zo- (8:00 t/m 19:00)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="timeSlot">Gewenste tijd *</label>
+                <input type="text" id="timeSlot" name="timeSlot" required placeholder="Bijv. 15:30 - 18:30" />
+              </div>
+
+              <div class="form-group">
+                <label for="kids">Kinderen (aantal en leeftijd) *</label>
+                <input type="text" id="kids" name="kids" required placeholder="Bijv. 1 kind (5 jaar)" />
+              </div>
+
+              <div class="form-group">
+                <label for="language">Taal</label>
+                <select id="language" name="language">
+                  <option value="Nederlands">Nederlands</option>
+                  <option value="Engels">Engels</option>
+                  <option value="Spaans">Spaans</option>
+                  <option value="IJslands">IJslands</option>
+                </select>
+              </div>
+
+              <div class="form-group full">
+                <label for="notes">Bericht (reistijd, donker worden, bijzonderheden)</label>
+                <textarea id="notes" name="notes" rows="3" placeholder="Geef eventuele info over reistijd, schemer/donker en de kinderen door."></textarea>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+              <button type="submit" id="submitBtn" class="btn">Verstuur aanvraag</button>
+            </div>
+
+            <div id="confirmationBox" class="confirmation" role="status"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-nav">
+      <a href="#home" onclick="openPage('home'); return false;">Home</a>
+      <a href="#over" onclick="openPage('over'); return false;">Over &amp; 50/50</a>
+      <a href="#beschikbaarheid" onclick="openPage('beschikbaarheid'); return false;">Beschikbaarheid</a>
+      <a href="#boeken" onclick="openPage('boeken'); return false;">Book</a>
+    </div>
+    <p><strong>Nanny Danine</strong> — Jouw oppas aan huis • 50% voor mij, 50% voor kankeronderzoek • Vanaf € 1,-[cite: 3]</p>
+  </footer>
+
+  <script>
+    var PAGES = ['home', 'over', 'beschikbaarheid', 'boeken'];
+
+    function openPage(pageName) {
+      var target = PAGES.indexOf(pageName) !== -1 ? pageName : 'home';
+
+      for (var i = 0; i < PAGES.length; i++) {
+        var name = PAGES[i];
+        var section = document.getElementById('page-' + name);
+        var navLink = document.getElementById('nav-' + name);
+
+        if (section) {
+          if (name === target) {
+            section.classList.add('is-visible');
+          } else {
+            section.classList.remove('is-visible');
+          }
+        }
+
+        if (navLink && navLink.classList.contains('page-link')) {
+          if (name === target) {
+            navLink.classList.add('active');
+          } else {
+            navLink.classList.remove('active');
+          }
+        }
+      }
+
+      if (window.location.hash !== '#' + target) {
+        window.location.hash = '#' + target;
+      }
+
+      window.scrollTo(0, 0);
+    }
+
+    window.addEventListener('hashchange', function () {
+      var hashName = window.location.hash.replace('#', '');
+      openPage(hashName);
+    });
+
+    (function init() {
+      var startHash = window.location.hash.replace('#', '');
+      openPage(startHash || 'home');
+    })();
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-analytics.js";
+    import { getDatabase, ref, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBYsZOlgGFVCDSstIiHUl3eH4USafOnTH0",
+      authDomain: "nanny-danine.firebaseapp.com",
+      databaseURL: "https://nanny-danine-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "nanny-danine",
+      storageBucket: "nanny-danine.firebasestorage.app",
+      messagingSenderId: "1010269342833",
+      appId: "1:1010269342833:web:553501242e8b41973c9fd0",
+      measurementId: "G-E1RY49JJKW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    getAnalytics(app);
+    const db = getDatabase(app);
+
+    const form = document.getElementById('bookingForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const confirmationBox = document.getElementById('confirmationBox');
+
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      const parentName = document.getElementById('parentName').value.trim();
+      const contactInfo = document.getElementById('contactInfo').value.trim();
+      const day = document.getElementById('day').value;
+      const timeSlot = document.getElementById('timeSlot').value.trim();
+      const kids = document.getElementById('kids').value.trim();
+      const language = document.getElementById('language').value;
+      const notes = document.getElementById('notes').value.trim();
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Versturen...';
+
+      const payload = {
+        parentName,
+        contactInfo,
+        day,
+        timeSlot,
+        kids,
+        language,
+        notes,
+        createdAt: serverTimestamp()
+      };
+
+      try {
+        await push(ref(db, 'bookings'), payload);
+        confirmationBox.style.display = 'block';
+        confirmationBox.innerHTML =
+          'Bedankt, <strong>' + escapeHtml(parentName) + '</strong>! Je aanvraag bij <strong>Nanny Danine</strong> voor <strong>' +
+          escapeHtml(day) + '</strong> (' + escapeHtml(timeSlot) + ') is opgeslagen.';
+        form.reset();
+      } catch (err) {
+        confirmationBox.style.display = 'block';
+        confirmationBox.innerHTML =
+          'Bedankt, <strong>' + escapeHtml(parentName) + '</strong>! Je aanvraag voor <strong>' +
+          escapeHtml(day) + '</strong> (' + escapeHtml(timeSlot) + ') is verwerkt. <em>(Database-melding: ' +
+          escapeHtml(err.message || 'controleer Realtime Database regels') + ')</em>';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Verstuur aanvraag';
+      }
+    });
+  </script>
+</body>
+</html>
