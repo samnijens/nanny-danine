@@ -524,6 +524,24 @@
       border-left: 3px solid var(--accent-hot);
     }
 
+    .closed-ticket-notice {
+      margin-top: 0.65rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #a82d49;
+      background: #fff4f7;
+      padding: 0.55rem 0.85rem;
+      border-radius: 10px;
+    }
+
+    .reauth-box {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      background: #fff9e6;
+      border: 1.5px solid var(--block-yellow);
+    }
+
     .notif-banner {
       display: none;
       background: #fff9e6;
@@ -961,6 +979,15 @@
                   </label>
                 </div>
               </div>
+
+              <div id="reauthBox" class="reauth-box" style="display: none;">
+                <p style="font-weight: 700; margin-bottom: 0.5rem;">Bevestig je huidige wachtwoord om je e-mailadres of wachtwoord te wijzigen:</p>
+                <div class="form-group" style="max-width: 340px;">
+                  <label for="profCurrentPassword">Huidig wachtwoord *</label>
+                  <input type="password" id="profCurrentPassword" placeholder="Vul je huidige wachtwoord in" />
+                </div>
+              </div>
+
               <div style="margin-top: 1.25rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
                 <button type="submit" class="btn btn-sm" id="saveProfileBtn">Instellingen opslaan</button>
                 <button type="button" class="btn btn-outline btn-sm" id="enableBrowserNotifsBtn">Browsermeldingen toestaan</button>
@@ -992,6 +1019,9 @@
 
           <div class="booking-card">
             <h3>Tickets &amp; contact met het staffteam</h3>
+            <p style="color: var(--ink-muted); font-size: 0.9rem; margin-top: 0.25rem;">
+              Gesloten tickets worden automatisch na 30 seconden verwijderd.
+            </p>
             <form id="createTicketForm" style="margin-top: 0.75rem; margin-bottom: 1.5rem;">
               <div class="form-grid">
                 <div class="form-group full">
@@ -1070,6 +1100,9 @@
 
           <div class="booking-card">
             <h3>Klanttickets</h3>
+            <p style="color: var(--ink-muted); font-size: 0.9rem; margin-top: 0.25rem; margin-bottom: 0.75rem;">
+              Na het sluiten van een ticket kan er niet meer getypt worden en wordt het ticket na 30 seconden verwijderd.
+            </p>
             <div id="staffTicketsList">
               <p style="color: var(--ink-muted);">Tickets laden...</p>
             </div>
@@ -1389,11 +1422,13 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-analytics.js";
-    import { getDatabase, ref, push, set, update, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-database.js";
+    import { getDatabase, ref, push, set, update, remove, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-database.js";
     import {
       getAuth,
       createUserWithEmailAndPassword,
       signInWithEmailAndPassword,
+      EmailAuthProvider,
+      reauthenticateWithCredential,
       updateEmail,
       updatePassword,
       signOut,
@@ -1416,6 +1451,8 @@
       "sam.nijens+nd@gmail.com"
     ];
 
+    const TICKET_DELETE_DELAY_MS = 30000;
+
     const app = initializeApp(firebaseConfig);
     getAnalytics(app);
     const db = getDatabase(app);
@@ -1428,6 +1465,7 @@
     let userNotifications = [];
     let userProfile = { name: '', phone: '', email: '', remindersEnabled: true };
     let sentReminderKeys = new Set();
+    let ticketDeletionTimers = new Map();
 
     const bookingsRef = ref(db, 'bookings');
     const ticketsRef = ref(db, 'tickets');
@@ -1436,6 +1474,60 @@
       if (!user || !user.email) return false;
       const lower = user.email.toLowerCase();
       return STAFF_EMAILS.includes(lower) || lower.includes('staff');
+    }
+
+    function getStaffDisplayName() {
+      if (userProfile && userProfile.name && userProfile.name.trim()) {
+        return userProfile.name.trim() + ' - Staff';
+      }
+      if (currentUser && currentUser.email) {
+        const prefix = currentUser.email.split('@')[0].replace(/[.+_-]+/g, ' ');
+        const formatted = prefix.charAt(0).toUpperCase() + prefix.slice(1);
+        return formatted + ' - Staff';
+      }
+      return 'Danine - Staff';
+    }
+
+    async function deleteClosedTicket(ticketId) {
+      if (!ticketId) return;
+      if (ticketDeletionTimers.has(ticketId)) {
+        clearTimeout(ticketDeletionTimers.get(ticketId));
+        ticketDeletionTimers.delete(ticketId);
+      }
+      try {
+        await remove(ref(db, 'tickets/' + ticketId));
+      } catch (_) {}
+    }
+
+    function syncClosedTicketTimers() {
+      const activeClosedIds = new Set();
+      const now = Date.now();
+
+      allTickets.forEach((t) => {
+        if (t.status === 'gesloten') {
+          activeClosedIds.add(t.id);
+          const closedAt = Number(t.closedAt || now);
+          const elapsed = now - closedAt;
+          const remaining = TICKET_DELETE_DELAY_MS - elapsed;
+
+          if (remaining <= 0) {
+            deleteClosedTicket(t.id);
+          } else if (!ticketDeletionTimers.has(t.id)) {
+            const timerId = setTimeout(() => {
+              ticketDeletionTimers.delete(t.id);
+              deleteClosedTicket(t.id);
+            }, remaining);
+            ticketDeletionTimers.set(t.id, timerId);
+          }
+        }
+      });
+
+      ticketDeletionTimers.forEach((timerId, id) => {
+        if (!activeClosedIds.has(id)) {
+          clearTimeout(timerId);
+          ticketDeletionTimers.delete(id);
+        }
+      });
     }
 
     onValue(bookingsRef, (snapshot) => {
@@ -1452,6 +1544,7 @@
     onValue(ticketsRef, (snapshot) => {
       const val = snapshot.val();
       allTickets = val ? Object.entries(val).map(([id, item]) => ({ id, ...item })) : [];
+      syncClosedTicketTimers();
       if (currentUser) {
         renderCustomerTickets();
         renderStaffTickets();
@@ -1526,7 +1619,7 @@
         if (canViewStaff) {
           staffLoginPanel.style.display = 'none';
           staffDashboardPanel.style.display = 'block';
-          document.getElementById('staffUserLabel').textContent = 'Ingelogd als ' + (currentUser.email || 'staff');
+          document.getElementById('staffUserLabel').textContent = 'Ingelogd als ' + getStaffDisplayName() + ' (' + (currentUser.email || '') + ')';
           renderStaffBookings();
           renderStaffTickets();
         } else {
@@ -1614,11 +1707,47 @@
       await signOut(auth);
     });
 
+    async function applySensitiveAuthUpdates(newEmail, newPassword, currentPasswordInput) {
+      const emailChanged = newEmail && newEmail !== currentUser.email;
+      const passwordChanged = Boolean(newPassword);
+      if (!emailChanged && !passwordChanged) return;
+
+      const runUpdates = async () => {
+        if (emailChanged) {
+          await updateEmail(currentUser, newEmail);
+        }
+        if (passwordChanged) {
+          await updatePassword(currentUser, newPassword);
+        }
+      };
+
+      try {
+        await runUpdates();
+      } catch (err) {
+        if (err && err.code === 'auth/requires-recent-login') {
+          const reauthBox = document.getElementById('reauthBox');
+          reauthBox.style.display = 'block';
+          const currPass = currentPasswordInput ? currentPasswordInput.value : '';
+          if (!currPass) {
+            throw new Error('Vul hierboven je huidige wachtwoord in om e-mail of wachtwoord te wijzigen.');
+          }
+          const credential = EmailAuthProvider.credential(currentUser.email, currPass);
+          await reauthenticateWithCredential(currentUser, credential);
+          await runUpdates();
+          reauthBox.style.display = 'none';
+          if (currentPasswordInput) currentPasswordInput.value = '';
+        } else {
+          throw err;
+        }
+      }
+    }
+
     document.getElementById('profileSettingsForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!currentUser) return;
       const statusBox = document.getElementById('profileStatusMsg');
       const errBox = document.getElementById('profileErrorMsg');
+      const currentPassInput = document.getElementById('profCurrentPassword');
       statusBox.style.display = 'none';
       errBox.style.display = 'none';
 
@@ -1629,12 +1758,7 @@
       const remindersEnabled = document.getElementById('profRemindersEnabled').checked;
 
       try {
-        if (newEmail && newEmail !== currentUser.email) {
-          await updateEmail(currentUser, newEmail);
-        }
-        if (newPassword) {
-          await updatePassword(currentUser, newPassword);
-        }
+        await applySensitiveAuthUpdates(newEmail, newPassword, currentPassInput);
         await update(ref(db, 'users/' + currentUser.uid), {
           name,
           phone,
@@ -1643,13 +1767,15 @@
         });
         userProfile = { name, phone, email: newEmail || currentUser.email, remindersEnabled };
         document.getElementById('profNewPassword').value = '';
+        document.getElementById('reauthBox').style.display = 'none';
+        document.getElementById('custWelcomeTitle').textContent = 'Welkom, ' + (userProfile.name || userProfile.email);
         document.getElementById('custCurrentEmailLabel').textContent = 'Ingelogd als ' + (newEmail || currentUser.email);
         statusBox.style.display = 'block';
         statusBox.textContent = 'Je accountgegevens, wachtwoord en meldingsinstellingen zijn opgeslagen.';
         checkFifteenMinuteReminders();
       } catch (err) {
         errBox.style.display = 'block';
-        errBox.textContent = 'Kon instellingen niet opslaan: ' + (err.message || 'log opnieuw in voor gevoelige wijzigingen');
+        errBox.textContent = 'Kon instellingen niet opslaan: ' + (err.message || 'onbekende fout');
       }
     });
 
@@ -1925,7 +2051,7 @@
               '<input type="text" class="reply-input" placeholder="Reageer op dit ticket..." required style="flex:1; min-width:200px;" />' +
               '<button type="submit" class="btn btn-sm btn-secondary">Verstuur</button>' +
             '</form>'
-          : '<p style="margin-top:0.65rem; font-size:0.88rem; color:var(--ink-muted);">Dit ticket is gesloten.</p>';
+          : '<div class="closed-ticket-notice">Dit ticket is gesloten. Typen is niet meer mogelijk en het ticket wordt binnen 30 seconden verwijderd.</div>';
 
         return (
           '<div class="item-box">' +
@@ -1943,11 +2069,12 @@
         f.addEventListener('submit', async function (ev) {
           ev.preventDefault();
           const ticketId = this.getAttribute('data-ticket-id');
+          const ticket = allTickets.find((x) => x.id === ticketId);
+          if (!ticket || ticket.status === 'gesloten') return;
           const input = this.querySelector('.reply-input');
           const text = input.value.trim();
           if (!text) return;
-          const ticket = allTickets.find((x) => x.id === ticketId);
-          const currentMsgs = ticket ? (Array.isArray(ticket.messages) ? ticket.messages : Object.values(ticket.messages || {})) : [];
+          const currentMsgs = Array.isArray(ticket.messages) ? ticket.messages : Object.values(ticket.messages || {});
           currentMsgs.push({
             sender: 'customer',
             senderName: userProfile.name || currentUser.email,
@@ -2110,6 +2237,13 @@
           '</div>'
         )).join('');
 
+        const replySectionHtml = !isClosed
+          ? '<form class="staff-reply-form" data-ticket-id="' + escapeHtml(t.id) + '" data-uid="' + escapeHtml(t.userId || '') + '" data-subject="' + escapeHtml(t.subject || '') + '" style="margin-top:0.75rem; display:flex; gap:0.5rem; flex-wrap:wrap;">' +
+              '<input type="text" class="staff-reply-input" placeholder="Schrijf antwoord aan klant..." required style="flex:1; min-width:200px;" />' +
+              '<button type="submit" class="btn btn-sm">Antwoord sturen</button>' +
+            '</form>'
+          : '<div class="closed-ticket-notice">Ticket gesloten — reageren is uitgeschakeld. Dit ticket wordt na 30 seconden automatisch verwijderd.</div>';
+
         return (
           '<div class="item-box">' +
             '<div class="item-header">' +
@@ -2122,10 +2256,7 @@
               '</div>' +
             '</div>' +
             '<div class="ticket-thread">' + msgsHtml + '</div>' +
-            '<form class="staff-reply-form" data-ticket-id="' + escapeHtml(t.id) + '" data-uid="' + escapeHtml(t.userId || '') + '" data-subject="' + escapeHtml(t.subject || '') + '" style="margin-top:0.75rem; display:flex; gap:0.5rem; flex-wrap:wrap;">' +
-              '<input type="text" class="staff-reply-input" placeholder="Schrijf antwoord aan klant..." required style="flex:1; min-width:200px;" />' +
-              '<button type="submit" class="btn btn-sm">Antwoord sturen</button>' +
-            '</form>' +
+            replySectionHtml +
           '</div>'
         );
       }).join('');
@@ -2135,25 +2266,36 @@
           const ticketId = this.getAttribute('data-ticket-id');
           const targetUid = this.getAttribute('data-uid');
           const subject = this.getAttribute('data-subject');
+          const staffLabel = getStaffDisplayName();
           this.disabled = true;
           this.textContent = 'Sluiten...';
 
           const ticket = allTickets.find((x) => x.id === ticketId);
           const currentMsgs = ticket ? (Array.isArray(ticket.messages) ? ticket.messages : Object.values(ticket.messages || {})) : [];
+          const closedAt = Date.now();
           currentMsgs.push({
             sender: 'staff',
-            senderName: 'Staff Nanny Danine',
-            text: 'Dit ticket is gesloten door het staffteam.',
-            timestamp: Date.now()
+            senderName: staffLabel,
+            text: 'Dit ticket is gesloten door ' + staffLabel + ' en wordt over 30 seconden verwijderd.',
+            timestamp: closedAt
           });
 
           await update(ref(db, 'tickets/' + ticketId), {
             status: 'gesloten',
+            closedAt,
             messages: currentMsgs
           });
 
           if (targetUid) {
-            await pushUserNotification(targetUid, 'Je ticket "' + subject + '" is gesloten door het staffteam.');
+            await pushUserNotification(targetUid, 'Je ticket "' + subject + '" is gesloten door ' + staffLabel + ' en wordt over 30 seconden verwijderd.');
+          }
+
+          if (!ticketDeletionTimers.has(ticketId)) {
+            const timerId = setTimeout(() => {
+              ticketDeletionTimers.delete(ticketId);
+              deleteClosedTicket(ticketId);
+            }, TICKET_DELETE_DELAY_MS);
+            ticketDeletionTimers.set(ticketId, timerId);
           }
         });
       });
@@ -2162,24 +2304,27 @@
         f.addEventListener('submit', async function (ev) {
           ev.preventDefault();
           const ticketId = this.getAttribute('data-ticket-id');
+          const ticket = allTickets.find((x) => x.id === ticketId);
+          if (!ticket || ticket.status === 'gesloten') return;
+
           const targetUid = this.getAttribute('data-uid');
           const subject = this.getAttribute('data-subject');
           const input = this.querySelector('.staff-reply-input');
           const text = input.value.trim();
           if (!text) return;
 
-          const ticket = allTickets.find((x) => x.id === ticketId);
-          const currentMsgs = ticket ? (Array.isArray(ticket.messages) ? ticket.messages : Object.values(ticket.messages || {})) : [];
+          const staffLabel = getStaffDisplayName();
+          const currentMsgs = Array.isArray(ticket.messages) ? ticket.messages : Object.values(ticket.messages || {});
           currentMsgs.push({
             sender: 'staff',
-            senderName: 'Staff Nanny Danine',
+            senderName: staffLabel,
             text,
             timestamp: Date.now()
           });
 
           await update(ref(db, 'tickets/' + ticketId), { messages: currentMsgs, status: 'beantwoord' });
           if (targetUid) {
-            await pushUserNotification(targetUid, 'Het staffteam heeft geantwoord op je ticket: "' + subject + '".');
+            await pushUserNotification(targetUid, staffLabel + ' heeft geantwoord op je ticket: "' + subject + '".');
           }
           input.value = '';
         });
@@ -2221,6 +2366,8 @@
             document.getElementById('phone').value = userProfile.phone;
           }
           checkFifteenMinuteReminders();
+          syncAuthUI();
+          renderStaffTickets();
         }, () => {});
 
         unsubUserNotifs = onValue(ref(db, 'notifications/' + user.uid), (snap) => {
