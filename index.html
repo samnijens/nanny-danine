@@ -1013,7 +1013,7 @@
             <div class="form-grid">
               <div class="form-group">
                 <label for="staffEmail">E-mailadres *</label>
-                <input type="email" id="staffEmail" required placeholder="Staff@nannydanine.nl" />
+                <input type="email" id="staffEmail" required placeholder="sam.nijens+nd@gmail.com" />
               </div>
               <div class="form-group">
                 <label for="staffPassword">Wachtwoord *</label>
@@ -1369,6 +1369,11 @@
       measurementId: "G-E1RY49JJKW"
     };
 
+    const STAFF_EMAILS = [
+      "daninekoala@gmail.com",
+      "sam.nijens+nd@gmail.com"
+    ];
+
     const app = initializeApp(firebaseConfig);
     getAnalytics(app);
     const db = getDatabase(app);
@@ -1384,6 +1389,12 @@
 
     const bookingsRef = ref(db, 'bookings');
     const ticketsRef = ref(db, 'tickets');
+
+    function isStaffAccount(user) {
+      if (!user || !user.email) return false;
+      const lower = user.email.toLowerCase();
+      return STAFF_EMAILS.includes(lower) || lower.includes('staff');
+    }
 
     onValue(bookingsRef, (snapshot) => {
       const val = snapshot.val();
@@ -1469,7 +1480,8 @@
         customerAuthBox.style.display = 'none';
         customerPortalBox.style.display = 'block';
 
-        if (staffSessionActive || window.location.hash === '#staff') {
+        const canViewStaff = isStaffAccount(currentUser) && (staffSessionActive || window.location.hash === '#staff');
+        if (canViewStaff) {
           staffLoginPanel.style.display = 'none';
           staffDashboardPanel.style.display = 'block';
           document.getElementById('staffUserLabel').textContent = 'Ingelogd als ' + (currentUser.email || 'staff');
@@ -1491,7 +1503,6 @@
 
     window.syncAuthUI = syncAuthUI;
 
-    // AUTH TABS
     const tabLoginBtn = document.getElementById('tabLoginBtn');
     const tabRegisterBtn = document.getElementById('tabRegisterBtn');
     const customerLoginForm = document.getElementById('customerLoginForm');
@@ -1561,7 +1572,6 @@
       await signOut(auth);
     });
 
-    // PROFIEL OPSLAAN
     document.getElementById('profileSettingsForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!currentUser) return;
@@ -1610,7 +1620,6 @@
       alert(perm === 'granted' ? 'Browsermeldingen ingeschakeld!' : 'Meldingen niet toegestaan.');
     });
 
-    // BOEKEN
     const bookingForm = document.getElementById('bookingForm');
     bookingForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -1704,7 +1713,6 @@
       }
     });
 
-    // KLANT BOEKINGEN
     function renderCustomerBookings() {
       const container = document.getElementById('customerBookingsList');
       if (!container || !currentUser) return;
@@ -1751,7 +1759,6 @@
       });
     }
 
-    // MELDINGEN KLANT
     function renderNotifications() {
       const listEl = document.getElementById('customerNotificationsList');
       const badge = document.getElementById('headerNotifBadge');
@@ -1785,7 +1792,6 @@
       }
     });
 
-    // TICKETS AANMAKEN
     document.getElementById('createTicketForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const statusEl = document.getElementById('ticketStatusMsg');
@@ -1885,7 +1891,6 @@
       });
     }
 
-    // STAFF LOGIN
     document.getElementById('staffLoginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const errBox = document.getElementById('staffErrorBox');
@@ -1895,11 +1900,17 @@
       btn.textContent = 'Inloggen...';
 
       try {
-        await signInWithEmailAndPassword(
+        const cred = await signInWithEmailAndPassword(
           auth,
           document.getElementById('staffEmail').value.trim(),
           document.getElementById('staffPassword').value
         );
+        if (!isStaffAccount(cred.user)) {
+          staffSessionActive = false;
+          errBox.style.display = 'block';
+          errBox.textContent = 'Dit account heeft geen staffrechten.';
+          return;
+        }
         staffSessionActive = true;
         document.getElementById('staffLoginForm').reset();
         window.openPage('staff');
@@ -2048,6 +2059,9 @@
       if (unsubUserNotifs) { unsubUserNotifs(); unsubUserNotifs = null; }
 
       if (user) {
+        if (isStaffAccount(user)) {
+          staffSessionActive = true;
+        }
         document.getElementById('custCurrentEmailLabel').textContent = 'Ingelogd als ' + (user.email || '');
         document.getElementById('profEmail').value = user.email || '';
 
