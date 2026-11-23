@@ -118,9 +118,7 @@
       display: none;
     }
 
-    .notif-pill.has-unread {
-      display: inline-block;
-    }
+    .notif-pill.has-unread { display: inline-block; }
 
     .btn {
       display: inline-flex;
@@ -146,48 +144,14 @@
       background: #d6496a;
     }
 
-    .btn:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-    }
-
-    .btn-sm {
-      padding: 0.45rem 1.05rem;
-      font-size: 0.92rem;
-    }
-
-    .btn-secondary {
-      background: var(--accent-teal);
-      box-shadow: 0 6px 16px rgba(42, 157, 143, 0.25);
-    }
-
-    .btn-secondary:hover:not(:disabled) {
-      background: #218377;
-    }
-
-    .btn-danger {
-      background: #c93b5b;
-      box-shadow: 0 4px 12px rgba(201, 59, 91, 0.25);
-      padding: 0.45rem 0.95rem;
-      font-size: 0.88rem;
-    }
-
-    .btn-danger:hover:not(:disabled) {
-      background: #a82d49;
-    }
-
-    .btn-outline {
-      background: #fff;
-      color: var(--ink-dark);
-      border: 1.5px solid #dfd3da;
-      box-shadow: none;
-    }
-
-    .btn-outline:hover:not(:disabled) {
-      background: #fff6f8;
-      border-color: var(--accent-hot);
-      color: var(--accent-hot);
-    }
+    .btn:disabled { opacity: 0.65; cursor: not-allowed; }
+    .btn-sm { padding: 0.45rem 1.05rem; font-size: 0.92rem; }
+    .btn-secondary { background: var(--accent-teal); box-shadow: 0 6px 16px rgba(42, 157, 143, 0.25); }
+    .btn-secondary:hover:not(:disabled) { background: #218377; }
+    .btn-danger { background: #c93b5b; box-shadow: 0 4px 12px rgba(201, 59, 91, 0.25); padding: 0.45rem 0.95rem; font-size: 0.88rem; }
+    .btn-danger:hover:not(:disabled) { background: #a82d49; }
+    .btn-outline { background: #fff; color: var(--ink-dark); border: 1.5px solid #dfd3da; box-shadow: none; }
+    .btn-outline:hover:not(:disabled) { background: #fff6f8; border-color: var(--accent-hot); color: var(--accent-hot); }
 
     main { flex: 1; }
     .page { display: none; }
@@ -263,7 +227,6 @@
     .section-header p { color: var(--ink-muted); max-width: 64ch; }
 
     .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; }
 
     .card {
       background: var(--card-white);
@@ -514,15 +477,8 @@
       color: var(--accent-teal);
     }
 
-    .status-chip.on-way {
-      background: #fff9e6;
-      color: #9e6b00;
-    }
-
-    .status-chip.cancelled {
-      background: #ffe8ee;
-      color: #a82d49;
-    }
+    .status-chip.on-way { background: #fff9e6; color: #9e6b00; }
+    .status-chip.cancelled { background: #ffe8ee; color: #a82d49; }
 
     .ticket-thread {
       margin-top: 0.75rem;
@@ -885,7 +841,7 @@
       </div>
     </section>
 
-    <!-- PAGINA 5: MIJN ACCOUNT (LOGIN, REGISTREREN, PROFIEL, MELDINGEN, BOEKINGEN, TICKETS) -->
+    <!-- PAGINA 5: MIJN ACCOUNT -->
     <section id="page-account" class="page">
       <div class="sub-hero">
         <div class="page-container" style="padding-bottom: 0.5rem;">
@@ -1015,7 +971,7 @@
             <h3>Tickets &amp; contact met het staffteam</h3>
             <form id="createTicketForm" style="margin-top: 0.75rem; margin-bottom: 1.5rem;">
               <div class="form-grid">
-                <div class="form-group">
+                <div class="form-group full">
                   <label for="ticketSubject">Onderwerp *</label>
                   <input type="text" id="ticketSubject" required placeholder="Bijv. Vraag over reistijd of boeking" />
                 </div>
@@ -1027,6 +983,8 @@
               <div style="margin-top: 0.9rem;">
                 <button type="submit" class="btn btn-sm" id="createTicketBtn">Ticket aanmaken</button>
               </div>
+              <div id="ticketStatusMsg" class="confirmation" style="margin-top: 0.75rem;"></div>
+              <div id="ticketErrorMsg" class="error-msg" style="margin-top: 0.75rem;"></div>
             </form>
 
             <div id="customerTicketsList">
@@ -1340,6 +1298,9 @@
         window.location.hash = '#' + target;
       }
       window.scrollTo(0, 0);
+      if (typeof window.syncAuthUI === 'function') {
+        window.syncAuthUI();
+      }
     }
 
     window.addEventListener('hashchange', function () {
@@ -1414,6 +1375,7 @@
     const auth = getAuth(app);
 
     let currentUser = null;
+    let staffSessionActive = false;
     let allBookings = [];
     let allTickets = [];
     let userNotifications = [];
@@ -1429,24 +1391,19 @@
       window.setActiveBookingsForCalendar(allBookings);
       if (currentUser) {
         renderCustomerBookings();
-        if (isStaffUser(currentUser)) renderStaffBookings();
+        renderStaffBookings();
       }
       checkFifteenMinuteReminders();
-    });
+    }, () => {});
 
     onValue(ticketsRef, (snapshot) => {
       const val = snapshot.val();
       allTickets = val ? Object.entries(val).map(([id, item]) => ({ id, ...item })) : [];
       if (currentUser) {
         renderCustomerTickets();
-        if (isStaffUser(currentUser)) renderStaffTickets();
+        renderStaffTickets();
       }
-    });
-
-    function isStaffUser(user) {
-      if (!user || !user.email) return false;
-      return user.email.toLowerCase().includes('staff') || user.email.toLowerCase() === 'daninekoala@gmail.com';
-    }
+    }, () => {});
 
     function showBannerAlert(text) {
       const banner = document.getElementById('liveAlertBanner');
@@ -1464,11 +1421,13 @@
 
     async function pushUserNotification(targetUid, message) {
       if (!targetUid) return;
-      await push(ref(db, 'notifications/' + targetUid), {
-        message,
-        read: false,
-        createdAt: serverTimestamp()
-      });
+      try {
+        await push(ref(db, 'notifications/' + targetUid), {
+          message,
+          read: false,
+          createdAt: serverTimestamp()
+        });
+      } catch (_) {}
     }
 
     function checkFifteenMinuteReminders() {
@@ -1496,6 +1455,42 @@
 
     setInterval(checkFifteenMinuteReminders, 60000);
 
+    function syncAuthUI() {
+      const bookingAuthGate = document.getElementById('bookingAuthGate');
+      const bookingFormPanel = document.getElementById('bookingFormPanel');
+      const customerAuthBox = document.getElementById('customerAuthBox');
+      const customerPortalBox = document.getElementById('customerPortalBox');
+      const staffLoginPanel = document.getElementById('staffLoginPanel');
+      const staffDashboardPanel = document.getElementById('staffDashboardPanel');
+
+      if (currentUser) {
+        bookingAuthGate.style.display = 'none';
+        bookingFormPanel.style.display = 'block';
+        customerAuthBox.style.display = 'none';
+        customerPortalBox.style.display = 'block';
+
+        if (staffSessionActive || window.location.hash === '#staff') {
+          staffLoginPanel.style.display = 'none';
+          staffDashboardPanel.style.display = 'block';
+          document.getElementById('staffUserLabel').textContent = 'Ingelogd als ' + (currentUser.email || 'staff');
+          renderStaffBookings();
+          renderStaffTickets();
+        } else {
+          staffLoginPanel.style.display = 'block';
+          staffDashboardPanel.style.display = 'none';
+        }
+      } else {
+        bookingAuthGate.style.display = 'block';
+        bookingFormPanel.style.display = 'none';
+        customerAuthBox.style.display = 'block';
+        customerPortalBox.style.display = 'none';
+        staffLoginPanel.style.display = 'block';
+        staffDashboardPanel.style.display = 'none';
+      }
+    }
+
+    window.syncAuthUI = syncAuthUI;
+
     // AUTH TABS
     const tabLoginBtn = document.getElementById('tabLoginBtn');
     const tabRegisterBtn = document.getElementById('tabRegisterBtn');
@@ -1522,6 +1517,7 @@
     customerLoginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       customerAuthError.style.display = 'none';
+      staffSessionActive = false;
       try {
         await signInWithEmailAndPassword(
           auth,
@@ -1538,6 +1534,7 @@
     customerRegisterForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       customerAuthError.style.display = 'none';
+      staffSessionActive = false;
       const name = document.getElementById('custRegName').value.trim();
       const phone = document.getElementById('custRegPhone').value.replace(/[^0-9]/g, '');
       const email = document.getElementById('custRegEmail').value.trim();
@@ -1560,10 +1557,11 @@
     });
 
     document.getElementById('customerLogoutBtn').addEventListener('click', async () => {
+      staffSessionActive = false;
       await signOut(auth);
     });
 
-    // PROFIEL OPSLAAN (EMAIL, TELEFOON, WACHTWOORD, MELDINGEN)
+    // PROFIEL OPSLAAN
     document.getElementById('profileSettingsForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!currentUser) return;
@@ -1612,7 +1610,7 @@
       alert(perm === 'granted' ? 'Browsermeldingen ingeschakeld!' : 'Meldingen niet toegestaan.');
     });
 
-    // BOEKEN (ALLEEN VOOR INGELOGDE GEBRUIKER + OVERLAPPING CHECK)
+    // BOEKEN
     const bookingForm = document.getElementById('bookingForm');
     bookingForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -1706,7 +1704,7 @@
       }
     });
 
-    // KLANT BOEKINGEN RENDEREN + ANNULEREN (VRIJGEVEN TIJD)
+    // KLANT BOEKINGEN
     function renderCustomerBookings() {
       const container = document.getElementById('customerBookingsList');
       if (!container || !currentUser) return;
@@ -1787,29 +1785,51 @@
       }
     });
 
-    // TICKETS AANMAKEN & BEANTWOORDEN
+    // TICKETS AANMAKEN
     document.getElementById('createTicketForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!currentUser) return;
+      const statusEl = document.getElementById('ticketStatusMsg');
+      const errEl = document.getElementById('ticketErrorMsg');
+      statusEl.style.display = 'none';
+      errEl.style.display = 'none';
+
+      if (!currentUser) {
+        errEl.style.display = 'block';
+        errEl.textContent = 'Je moet ingelogd zijn om een ticket aan te maken.';
+        return;
+      }
+
       const subject = document.getElementById('ticketSubject').value.trim();
       const message = document.getElementById('ticketMessage').value.trim();
+      const btn = document.getElementById('createTicketBtn');
+      btn.disabled = true;
+      btn.textContent = 'Versturen...';
 
-      await push(ticketsRef, {
-        userId: currentUser.uid,
-        userEmail: currentUser.email,
-        userName: userProfile.name || currentUser.email,
-        subject,
-        status: 'open',
-        createdAt: serverTimestamp(),
-        messages: [{
-          sender: 'customer',
-          senderName: userProfile.name || currentUser.email,
-          text: message,
-          timestamp: Date.now()
-        }]
-      });
-
-      document.getElementById('createTicketForm').reset();
+      try {
+        await push(ticketsRef, {
+          userId: currentUser.uid,
+          userEmail: currentUser.email,
+          userName: userProfile.name || currentUser.email,
+          subject,
+          status: 'open',
+          createdAt: serverTimestamp(),
+          messages: [{
+            sender: 'customer',
+            senderName: userProfile.name || currentUser.email,
+            text: message,
+            timestamp: Date.now()
+          }]
+        });
+        document.getElementById('createTicketForm').reset();
+        statusEl.style.display = 'block';
+        statusEl.textContent = 'Ticket aangemaakt! Het staffteam kan nu reageren.';
+      } catch (err) {
+        errEl.style.display = 'block';
+        errEl.textContent = 'Ticket aanmaken mislukt: ' + (err.message || 'controleer Firebase Realtime Database-regels voor tickets');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Ticket aanmaken';
+      }
     });
 
     function renderCustomerTickets() {
@@ -1865,25 +1885,35 @@
       });
     }
 
-    // STAFF LOGIN, "DANINE IS ONDERWEG", ANNULEREN & TICKETS BEANTWOORDEN
+    // STAFF LOGIN
     document.getElementById('staffLoginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const errBox = document.getElementById('staffErrorBox');
       errBox.style.display = 'none';
+      const btn = document.getElementById('staffLoginBtn');
+      btn.disabled = true;
+      btn.textContent = 'Inloggen...';
+
       try {
         await signInWithEmailAndPassword(
           auth,
           document.getElementById('staffEmail').value.trim(),
           document.getElementById('staffPassword').value
         );
+        staffSessionActive = true;
         document.getElementById('staffLoginForm').reset();
+        window.openPage('staff');
       } catch (err) {
         errBox.style.display = 'block';
         errBox.textContent = 'Staff login mislukt: ' + (err.message || 'onbekende fout');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Inloggen';
       }
     });
 
     document.getElementById('staffLogoutBtn').addEventListener('click', async () => {
+      staffSessionActive = false;
       await signOut(auth);
     });
 
@@ -2017,18 +2047,7 @@
       if (unsubUserProfile) { unsubUserProfile(); unsubUserProfile = null; }
       if (unsubUserNotifs) { unsubUserNotifs(); unsubUserNotifs = null; }
 
-      const bookingAuthGate = document.getElementById('bookingAuthGate');
-      const bookingFormPanel = document.getElementById('bookingFormPanel');
-      const customerAuthBox = document.getElementById('customerAuthBox');
-      const customerPortalBox = document.getElementById('customerPortalBox');
-      const staffLoginPanel = document.getElementById('staffLoginPanel');
-      const staffDashboardPanel = document.getElementById('staffDashboardPanel');
-
       if (user) {
-        bookingAuthGate.style.display = 'none';
-        bookingFormPanel.style.display = 'block';
-        customerAuthBox.style.display = 'none';
-        customerPortalBox.style.display = 'block';
         document.getElementById('custCurrentEmailLabel').textContent = 'Ingelogd als ' + (user.email || '');
         document.getElementById('profEmail').value = user.email || '';
 
@@ -2052,7 +2071,7 @@
             document.getElementById('phone').value = userProfile.phone;
           }
           checkFifteenMinuteReminders();
-        });
+        }, () => {});
 
         unsubUserNotifs = onValue(ref(db, 'notifications/' + user.uid), (snap) => {
           const val = snap.val();
@@ -2063,31 +2082,17 @@
           if (newestUnread && userProfile.remindersEnabled) {
             showBannerAlert(newestUnread.message);
           }
-        });
+        }, () => {});
 
         renderCustomerBookings();
         renderCustomerTickets();
-
-        if (isStaffUser(user)) {
-          staffLoginPanel.style.display = 'none';
-          staffDashboardPanel.style.display = 'block';
-          document.getElementById('staffUserLabel').textContent = 'Ingelogd als ' + (user.email || 'staff');
-          renderStaffBookings();
-          renderStaffTickets();
-        } else {
-          staffLoginPanel.style.display = 'block';
-          staffDashboardPanel.style.display = 'none';
-        }
       } else {
-        bookingAuthGate.style.display = 'block';
-        bookingFormPanel.style.display = 'none';
-        customerAuthBox.style.display = 'block';
-        customerPortalBox.style.display = 'none';
-        staffLoginPanel.style.display = 'block';
-        staffDashboardPanel.style.display = 'none';
+        staffSessionActive = false;
         userNotifications = [];
         renderNotifications();
       }
+
+      syncAuthUI();
     });
   </script>
 </body>
