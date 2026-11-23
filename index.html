@@ -478,7 +478,30 @@
     }
 
     .status-chip.on-way { background: #fff9e6; color: #9e6b00; }
-    .status-chip.cancelled { background: #ffe8ee; color: #a82d49; }
+    .status-chip.delayed { background: #fff0e0; color: #b85600; }
+    .status-chip.cancelled,
+    .status-chip.closed { background: #ffe8ee; color: #a82d49; }
+
+    .staff-booking-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .delay-inline-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .delay-min-input {
+      width: 68px;
+      padding: 0.35rem 0.5rem !important;
+      font-size: 0.88rem !important;
+      border-radius: 10px !important;
+      text-align: center;
+    }
 
     .ticket-thread {
       margin-top: 0.75rem;
@@ -820,7 +843,7 @@
                   <option value="Duits (Beginner)">Duits (Beginner)</option>
                   <option value="IJslands (Beginner)">IJslands (Beginner)</option>
                   <option value="Japans (Beginner)">Japans (Beginner)</option>
-                  <option value="ASL (Beginner)">ASL (Gebarentaal - Beginner)</option>
+                  <option value="ASL (Gebarentaal - Beginner)">ASL (Gebarentaal - Beginner)</option>
                 </select>
               </div>
 
@@ -934,7 +957,7 @@
                 <div class="form-group full">
                   <label style="display: inline-flex; align-items: center; gap: 0.55rem; cursor: pointer;">
                     <input type="checkbox" id="profRemindersEnabled" style="width: 18px; height: 18px;" />
-                    <span>Meldingen aanzetten (o.a. 15 minuten voor boeking &amp; als Danine onderweg is)</span>
+                    <span>Meldingen aanzetten (o.a. 15 minuten voor boeking, vertraging &amp; als Danine onderweg is)</span>
                   </label>
                 </div>
               </div>
@@ -1001,7 +1024,7 @@
         <div class="page-container" style="padding-bottom: 0.5rem;">
           <div class="section-header">
             <h1>Staff dashboard</h1>
-            <p>Beheer boekingen, geef door wanneer Danine onderweg is en beantwoord tickets.</p>
+            <p>Beheer boekingen, meld vertraging of onderweg zijn en beantwoord of sluit tickets.</p>
           </div>
         </div>
       </div>
@@ -1123,6 +1146,17 @@
       return options;
     }
 
+    function isSelectedDateToday() {
+      if (!calendarSelectedDate) return false;
+      var now = new Date();
+      return formatLocalIsoDate(calendarSelectedDate) === formatLocalIsoDate(now);
+    }
+
+    function getCurrentMinutesOfDay() {
+      var now = new Date();
+      return now.getHours() * 60 + now.getMinutes();
+    }
+
     function getBookingsForDate(isoDate) {
       return allActiveBookings.filter(function (b) {
         return b && b.isoDate === isoDate && b.status !== 'cancelled';
@@ -1235,16 +1269,24 @@
       var hoursInfo = DAY_HOURS[dayIdx];
       if (!hoursInfo) return;
 
+      var isToday = isSelectedDateToday();
+      var nowMins = getCurrentMinutesOfDay();
       var times = generateTimeOptions(hoursInfo.start, hoursInfo.end);
+
       times.forEach(function (t) {
+        var slotMins = parseTimeToMinutes(t);
+        var isPast = isToday && slotMins !== null && slotMins <= nowMins;
+
         var opt1 = document.createElement('option');
         opt1.value = t;
-        opt1.textContent = t;
+        opt1.textContent = isPast ? t + ' (al geweest)' : t;
+        if (isPast) opt1.disabled = true;
         startSelect.appendChild(opt1);
 
         var opt2 = document.createElement('option');
         opt2.value = t;
-        opt2.textContent = t;
+        opt2.textContent = isPast ? t + ' (al geweest)' : t;
+        if (isPast) opt2.disabled = true;
         endSelect.appendChild(opt2);
       });
 
@@ -1661,6 +1703,13 @@
         return;
       }
 
+      const todayIso = window.formatLocalIsoDate(new Date());
+      if (isoDate === todayIso && reqStart <= window.getCurrentMinutesOfDay()) {
+        errBox.style.display = 'block';
+        errBox.textContent = 'De gekozen begintijd is al geweest. Kies een toekomstig tijdstip.';
+        return;
+      }
+
       const overlap = allBookings.find((b) => {
         if (b.isoDate !== isoDate || b.status === 'cancelled') return false;
         const bStart = window.parseTimeToMinutes(b.startTime);
@@ -1697,6 +1746,8 @@
           notes,
           status: 'confirmed',
           onTheWay: false,
+          delayed: false,
+          delayMinutes: 0,
           createdAt: serverTimestamp()
         });
 
@@ -1713,6 +1764,24 @@
       }
     });
 
+    function buildBookingStatusChip(b) {
+      if (b.status === 'cancelled') {
+        return '<span class="status-chip cancelled">Geannuleerd</span>';
+      }
+      const chips = [];
+      if (b.delayed) {
+        const mins = Number(b.delayMinutes) > 0 ? ' (' + Number(b.delayMinutes) + ' min)' : '';
+        chips.push('<span class="status-chip delayed">Vertraging' + mins + '</span>');
+      }
+      if (b.onTheWay) {
+        chips.push('<span class="status-chip on-way">Danine is onderweg</span>');
+      }
+      if (chips.length === 0) {
+        chips.push('<span class="status-chip">Bevestigd</span>');
+      }
+      return chips.join(' ');
+    }
+
     function renderCustomerBookings() {
       const container = document.getElementById('customerBookingsList');
       if (!container || !currentUser) return;
@@ -1724,12 +1793,7 @@
 
       container.innerHTML = mine.map((b) => {
         const isCancelled = b.status === 'cancelled';
-        const chipHtml = isCancelled
-          ? '<span class="status-chip cancelled">Geannuleerd</span>'
-          : (b.onTheWay
-              ? '<span class="status-chip on-way">Danine is onderweg</span>'
-              : '<span class="status-chip">Bevestigd</span>');
-
+        const chipHtml = buildBookingStatusChip(b);
         const cancelBtn = !isCancelled
           ? '<button type="button" class="btn btn-danger cancel-my-booking-btn" data-id="' + escapeHtml(b.id) + '">Annuleer boeking</button>'
           : '';
@@ -1848,6 +1912,7 @@
       }
 
       container.innerHTML = mine.map((t) => {
+        const isClosed = t.status === 'gesloten';
         const msgs = Array.isArray(t.messages) ? t.messages : Object.values(t.messages || {});
         const msgsHtml = msgs.map((m) => (
           '<div class="ticket-msg ' + (m.sender === 'staff' ? 'staff-msg' : '') + '">' +
@@ -1855,17 +1920,21 @@
           '</div>'
         )).join('');
 
+        const replyFormHtml = !isClosed
+          ? '<form class="customer-reply-form" data-ticket-id="' + escapeHtml(t.id) + '" style="margin-top:0.75rem; display:flex; gap:0.5rem; flex-wrap:wrap;">' +
+              '<input type="text" class="reply-input" placeholder="Reageer op dit ticket..." required style="flex:1; min-width:200px;" />' +
+              '<button type="submit" class="btn btn-sm btn-secondary">Verstuur</button>' +
+            '</form>'
+          : '<p style="margin-top:0.65rem; font-size:0.88rem; color:var(--ink-muted);">Dit ticket is gesloten.</p>';
+
         return (
           '<div class="item-box">' +
             '<div class="item-header">' +
               '<strong>' + escapeHtml(t.subject) + '</strong>' +
-              '<span class="status-chip">' + escapeHtml(t.status || 'open') + '</span>' +
+              '<span class="status-chip ' + (isClosed ? 'closed' : '') + '">' + escapeHtml(t.status || 'open') + '</span>' +
             '</div>' +
             '<div class="ticket-thread">' + msgsHtml + '</div>' +
-            '<form class="customer-reply-form" data-ticket-id="' + escapeHtml(t.id) + '" style="margin-top:0.75rem; display:flex; gap:0.5rem; flex-wrap:wrap;">' +
-              '<input type="text" class="reply-input" placeholder="Reageer op dit ticket..." required style="flex:1; min-width:200px;" />' +
-              '<button type="submit" class="btn btn-sm btn-secondary">Verstuur</button>' +
-            '</form>' +
+            replyFormHtml +
           '</div>'
         );
       }).join('');
@@ -1938,22 +2007,25 @@
 
       container.innerHTML = allBookings.map((item) => {
         const isCancelled = item.status === 'cancelled';
-        const statusChip = isCancelled
-          ? '<span class="status-chip cancelled">Geannuleerd (tijd vrij)</span>'
-          : (item.onTheWay
-              ? '<span class="status-chip on-way">Danine is onderweg</span>'
-              : '<span class="status-chip">Actief (tijd geblokkeerd)</span>');
+        const statusChip = buildBookingStatusChip(item);
+        const defaultDelay = Number(item.delayMinutes) > 0 ? Number(item.delayMinutes) : 15;
+
+        const actionButtons = !isCancelled
+          ? '<div class="staff-booking-actions">' +
+              '<button type="button" class="btn btn-secondary btn-sm on-way-btn" data-id="' + escapeHtml(item.id) + '" data-uid="' + escapeHtml(item.userId || '') + '" data-date="' + escapeHtml(item.dateText || item.isoDate) + '">Danine is onderweg</button>' +
+              '<span class="delay-inline-group">' +
+                '<input type="number" min="1" max="240" class="delay-min-input" value="' + defaultDelay + '" aria-label="Minuten vertraging" />' +
+                '<button type="button" class="btn btn-outline btn-sm delay-btn" data-id="' + escapeHtml(item.id) + '" data-uid="' + escapeHtml(item.userId || '') + '" data-date="' + escapeHtml(item.dateText || item.isoDate) + '">Vertraging melden</button>' +
+              '</span>' +
+              '<button type="button" class="btn btn-danger staff-cancel-btn" data-id="' + escapeHtml(item.id) + '">Annuleer &amp; maak vrij</button>' +
+            '</div>'
+          : '';
 
         return (
           '<div class="item-box">' +
             '<div class="item-header">' +
               '<div><strong>' + escapeHtml(item.parentName) + '</strong> — ' + escapeHtml(item.dateText || item.isoDate) + ' (' + escapeHtml(item.startTime) + ' - ' + escapeHtml(item.endTime) + ') ' + statusChip + '</div>' +
-              '<div style="display:flex; gap:0.5rem; flex-wrap:wrap;">' +
-                (!isCancelled
-                  ? '<button type="button" class="btn btn-secondary btn-sm on-way-btn" data-id="' + escapeHtml(item.id) + '" data-uid="' + escapeHtml(item.userId || '') + '" data-date="' + escapeHtml(item.dateText || item.isoDate) + '">Danine is onderweg</button>' +
-                    '<button type="button" class="btn btn-danger staff-cancel-btn" data-id="' + escapeHtml(item.id) + '">Annuleer &amp; maak vrij</button>'
-                  : '') +
-              '</div>' +
+              actionButtons +
             '</div>' +
             '<div class="booking-meta">' +
               '<div><strong>Telefoon:</strong> ' + escapeHtml(item.phone || '-') + '</div>' +
@@ -1982,6 +2054,36 @@
         });
       });
 
+      container.querySelectorAll('.delay-btn').forEach((btn) => {
+        btn.addEventListener('click', async function () {
+          const bookingId = this.getAttribute('data-id');
+          const targetUid = this.getAttribute('data-uid');
+          const dateLabel = this.getAttribute('data-date');
+          const group = this.closest('.delay-inline-group');
+          const input = group ? group.querySelector('.delay-min-input') : null;
+          const mins = Math.max(1, parseInt((input && input.value) || '15', 10) || 15);
+
+          this.disabled = true;
+          const prevLabel = this.textContent;
+          this.textContent = 'Vertraging sturen...';
+
+          await update(ref(db, 'bookings/' + bookingId), {
+            delayed: true,
+            delayMinutes: mins
+          });
+
+          if (targetUid) {
+            await pushUserNotification(
+              targetUid,
+              'Let op: Danine heeft ongeveer ' + mins + ' minuten vertraging voor je boeking op ' + dateLabel + '.'
+            );
+          }
+
+          this.disabled = false;
+          this.textContent = prevLabel;
+        });
+      });
+
       container.querySelectorAll('.staff-cancel-btn').forEach((btn) => {
         btn.addEventListener('click', async function () {
           const bookingId = this.getAttribute('data-id');
@@ -2000,6 +2102,7 @@
       }
 
       container.innerHTML = allTickets.map((t) => {
+        const isClosed = t.status === 'gesloten';
         const msgs = Array.isArray(t.messages) ? t.messages : Object.values(t.messages || {});
         const msgsHtml = msgs.map((m) => (
           '<div class="ticket-msg ' + (m.sender === 'staff' ? 'staff-msg' : '') + '">' +
@@ -2011,7 +2114,12 @@
           '<div class="item-box">' +
             '<div class="item-header">' +
               '<div><strong>' + escapeHtml(t.subject) + '</strong> — <span style="color:var(--ink-muted);">' + escapeHtml(t.userEmail || '') + '</span></div>' +
-              '<span class="status-chip">' + escapeHtml(t.status || 'open') + '</span>' +
+              '<div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">' +
+                '<span class="status-chip ' + (isClosed ? 'closed' : '') + '">' + escapeHtml(t.status || 'open') + '</span>' +
+                (!isClosed
+                  ? '<button type="button" class="btn btn-danger close-ticket-btn" data-ticket-id="' + escapeHtml(t.id) + '" data-uid="' + escapeHtml(t.userId || '') + '" data-subject="' + escapeHtml(t.subject || '') + '">Sluit ticket</button>'
+                  : '') +
+              '</div>' +
             '</div>' +
             '<div class="ticket-thread">' + msgsHtml + '</div>' +
             '<form class="staff-reply-form" data-ticket-id="' + escapeHtml(t.id) + '" data-uid="' + escapeHtml(t.userId || '') + '" data-subject="' + escapeHtml(t.subject || '') + '" style="margin-top:0.75rem; display:flex; gap:0.5rem; flex-wrap:wrap;">' +
@@ -2021,6 +2129,34 @@
           '</div>'
         );
       }).join('');
+
+      container.querySelectorAll('.close-ticket-btn').forEach((btn) => {
+        btn.addEventListener('click', async function () {
+          const ticketId = this.getAttribute('data-ticket-id');
+          const targetUid = this.getAttribute('data-uid');
+          const subject = this.getAttribute('data-subject');
+          this.disabled = true;
+          this.textContent = 'Sluiten...';
+
+          const ticket = allTickets.find((x) => x.id === ticketId);
+          const currentMsgs = ticket ? (Array.isArray(ticket.messages) ? ticket.messages : Object.values(ticket.messages || {})) : [];
+          currentMsgs.push({
+            sender: 'staff',
+            senderName: 'Staff Nanny Danine',
+            text: 'Dit ticket is gesloten door het staffteam.',
+            timestamp: Date.now()
+          });
+
+          await update(ref(db, 'tickets/' + ticketId), {
+            status: 'gesloten',
+            messages: currentMsgs
+          });
+
+          if (targetUid) {
+            await pushUserNotification(targetUid, 'Je ticket "' + subject + '" is gesloten door het staffteam.');
+          }
+        });
+      });
 
       container.querySelectorAll('.staff-reply-form').forEach((f) => {
         f.addEventListener('submit', async function (ev) {
