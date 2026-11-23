@@ -439,7 +439,6 @@
       margin: 0 auto;
     }
 
-    /* KALENDER EN DUUR STYLES */
     .calendar-wrapper {
       background: #fffdfd;
       border: 1.5px solid #f0e6eb;
@@ -934,15 +933,14 @@
 
       <div class="page-container">
         <div class="booking-card">
-          
-          <!-- MAANDKALENDER -->
+
           <div class="calendar-wrapper">
             <div class="calendar-nav-bar">
               <button type="button" class="cal-nav-btn" id="prevMonthBtn">&larr; Vorige</button>
               <div class="calendar-month-title" id="calMonthTitle">Maand Jaar</div>
               <button type="button" class="cal-nav-btn" id="nextMonthBtn">Volgende &rarr;</button>
             </div>
-            
+
             <div class="calendar-grid">
               <div class="cal-head-day">Ma</div>
               <div class="cal-head-day">Di</div>
@@ -957,7 +955,7 @@
 
           <form id="bookingForm">
             <div class="form-grid">
-              
+
               <div class="form-group full">
                 <label for="bookingDateText">Gekozen datum *</label>
                 <input type="text" id="bookingDateText" name="bookingDateText" readonly placeholder="Klik op een datum in de kalender hierboven" style="background:#fff6f8; font-weight:700; color:var(--accent-hot);" required />
@@ -1120,18 +1118,33 @@
     var MONTH_NAMES = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
 
     var DAY_HOURS = {
-      1: { start: '15:30', end: '20:00' }, // Ma
-      2: { start: '15:30', end: '20:00' }, // Di
-      3: { start: '14:30', end: '20:00' }, // Wo
-      4: { start: '13:00', end: '20:00' }, // Do
-      5: { start: '14:30', end: '20:20' }, // Vr
-      6: { start: '09:00', end: '19:00' }, // Za
-      0: { start: '09:00', end: '19:00' }  // Zo
+      1: { start: '15:30', end: '20:00' },
+      2: { start: '15:30', end: '20:00' },
+      3: { start: '14:30', end: '20:00' },
+      4: { start: '13:00', end: '20:00' },
+      5: { start: '14:30', end: '20:20' },
+      6: { start: '09:00', end: '19:00' },
+      0: { start: '09:00', end: '19:00' }
     };
 
-    var currentBlockedBookings = [];
-    var calendarSelectedDate = null; 
+    var calendarSelectedDate = null;
     var calViewDate = new Date();
+
+    function formatLocalIsoDate(dateObj) {
+      var y = dateObj.getFullYear();
+      var m = String(dateObj.getMonth() + 1).padStart(2, '0');
+      var d = String(dateObj.getDate()).padStart(2, '0');
+      return y + '-' + m + '-' + d;
+    }
+
+    function parseLocalIsoDate(isoStr) {
+      var parts = String(isoStr || '').split('-');
+      if (parts.length !== 3) return null;
+      var year = parseInt(parts[0], 10);
+      var month = parseInt(parts[1], 10) - 1;
+      var day = parseInt(parts[2], 10);
+      return new Date(year, month, day);
+    }
 
     function parseTimeToMinutes(hhmm) {
       if (!hhmm) return null;
@@ -1169,11 +1182,12 @@
       grid.innerHTML = '';
 
       var firstDayIndex = new Date(year, month, 1).getDay();
-      var offset = (firstDayIndex + 6) % 7; 
+      var offset = (firstDayIndex + 6) % 7;
       var daysInMonth = new Date(year, month + 1, 0).getDate();
 
-      var today = new Date();
-      today.setHours(0,0,0,0);
+      var now = new Date();
+      var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      var selectedIso = calendarSelectedDate ? formatLocalIsoDate(calendarSelectedDate) : '';
 
       for (var i = 0; i < offset; i++) {
         var emptyCell = document.createElement('div');
@@ -1183,7 +1197,7 @@
 
       for (var d = 1; d <= daysInMonth; d++) {
         var cellDate = new Date(year, month, d);
-        var dateStr = cellDate.toISOString().split('T')[0];
+        var dateStr = formatLocalIsoDate(cellDate);
 
         var cell = document.createElement('div');
         cell.className = 'cal-day-cell';
@@ -1197,13 +1211,16 @@
           cell.classList.add('is-disabled');
         } else {
           cell.setAttribute('data-date', dateStr);
-          cell.addEventListener('click', function() {
+          cell.addEventListener('click', function () {
             var selectedStr = this.getAttribute('data-date');
-            selectCalendarDate(new Date(selectedStr + 'T00:00:00'));
+            var parsed = parseLocalIsoDate(selectedStr);
+            if (parsed) {
+              selectCalendarDate(parsed);
+            }
           });
         }
 
-        if (calendarSelectedDate && calendarSelectedDate.toISOString().split('T')[0] === dateStr) {
+        if (selectedIso && selectedIso === dateStr) {
           cell.classList.add('is-selected');
         }
 
@@ -1212,14 +1229,14 @@
     }
 
     function selectCalendarDate(dateObj) {
-      calendarSelectedDate = dateObj;
+      calendarSelectedDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
 
-      var dayIdx = dateObj.getDay();
+      var dayIdx = calendarSelectedDate.getDay();
       var dayName = DAY_NAMES[dayIdx];
-      var formattedDate = dayName + ' ' + dateObj.getDate() + ' ' + MONTH_NAMES[dateObj.getMonth()] + ' ' + dateObj.getFullYear();
-      
+      var formattedDate = dayName + ' ' + calendarSelectedDate.getDate() + ' ' + MONTH_NAMES[calendarSelectedDate.getMonth()] + ' ' + calendarSelectedDate.getFullYear();
+
       document.getElementById('bookingDateText').value = formattedDate;
-      document.getElementById('selectedIsoDate').value = dateObj.toISOString().split('T')[0];
+      document.getElementById('selectedIsoDate').value = formatLocalIsoDate(calendarSelectedDate);
 
       updateAvailableTimesForDay(dayIdx);
       renderCalendar();
@@ -1228,7 +1245,7 @@
     function updateAvailableTimesForDay(dayIdx) {
       var startSelect = document.getElementById('startTime');
       var endSelect = document.getElementById('endTime');
-      
+
       startSelect.innerHTML = '<option value="">Kies begintijd</option>';
       endSelect.innerHTML = '<option value="">Kies eindtijd</option>';
 
@@ -1237,7 +1254,7 @@
 
       var times = generateTimeOptions(hoursInfo.start, hoursInfo.end);
 
-      times.forEach(function(t) {
+      times.forEach(function (t) {
         var opt1 = document.createElement('option');
         opt1.value = t;
         opt1.textContent = t;
@@ -1324,13 +1341,13 @@
 
       renderCalendar();
 
-      document.getElementById('prevMonthBtn').addEventListener('click', function() {
-        calViewDate.setMonth(calViewDate.getMonth() - 1);
+      document.getElementById('prevMonthBtn').addEventListener('click', function () {
+        calViewDate = new Date(calViewDate.getFullYear(), calViewDate.getMonth() - 1, 1);
         renderCalendar();
       });
 
-      document.getElementById('nextMonthBtn').addEventListener('click', function() {
-        calViewDate.setMonth(calViewDate.getMonth() + 1);
+      document.getElementById('nextMonthBtn').addEventListener('click', function () {
+        calViewDate = new Date(calViewDate.getFullYear(), calViewDate.getMonth() + 1, 1);
         renderCalendar();
       });
 
@@ -1417,13 +1434,12 @@
       const reqStart = window.parseTimeToMinutes(startTime);
       const reqEnd = window.parseTimeToMinutes(endTime);
 
-      if (!reqStart || !reqEnd || reqEnd <= reqStart) {
+      if (reqStart === null || reqEnd === null || reqEnd <= reqStart) {
         bookingErrorBox.style.display = 'block';
         bookingErrorBox.textContent = 'Kies een geldige begin- en eindtijd.';
         return;
       }
 
-      // Controleer op overlapping met bestaande boekingen op dezelfde datum
       const conflict = allBookingsList.find(b => {
         if (b.isoDate !== isoDate) return false;
         const bStart = window.parseTimeToMinutes(b.startTime);
