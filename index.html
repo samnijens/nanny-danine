@@ -489,6 +489,40 @@
       align-items: center;
     }
 
+    .route-panel-box {
+      margin-top: 0.85rem;
+      padding: 1rem;
+      background: #f4faf8;
+      border: 1.5px solid var(--block-mint);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .route-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .route-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: #4285F4;
+      color: #fff;
+      padding: 0.45rem 0.95rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+
+    .route-link-btn:hover { background: #2b6cb0; }
+
     .delay-inline-group {
       display: inline-flex;
       align-items: center;
@@ -1283,7 +1317,7 @@
       calendarSelectedDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
       var iso = formatLocalIsoDate(calendarSelectedDate);
       var dayIdx = calendarSelectedDate.getDay();
-      var formattedDate = DAY_NAMES[dayIdx] + ' ' + calendarSelectedDate.getDate() + ' ' + MONTH_NAMES[calendarSelectedDate.getMonth()] + ' ' + calendarSelectedDate.getFullYear();
+      var formattedDate = DAY_NAMES[dayIdx] + ' ' + calendarSelectedDate.getDate() + ' ' + MONTH_NAMES[calendarSelectedDate.getMonth()] + ' ' + MONTH_NAMES[calendarSelectedDate.getMonth()] + ' ' + calendarSelectedDate.getFullYear();
 
       document.getElementById('bookingDateText').value = formattedDate;
       document.getElementById('selectedIsoDate').value = iso;
@@ -1466,6 +1500,7 @@
     let userProfile = { name: '', phone: '', email: '', remindersEnabled: true };
     let sentReminderKeys = new Set();
     let ticketDeletionTimers = new Map();
+    let activeRoutePanelBookingId = null;
 
     const bookingsRef = ref(db, 'bookings');
     const ticketsRef = ref(db, 'tickets');
@@ -2136,17 +2171,40 @@
         const isCancelled = item.status === 'cancelled';
         const statusChip = buildBookingStatusChip(item);
         const defaultDelay = Number(item.delayMinutes) > 0 ? Number(item.delayMinutes) : 15;
+        const isRouteOpen = activeRoutePanelBookingId === item.id;
+        const fullDestinationAddress = (item.address || '') + ', ' + (item.city || '');
+        const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(fullDestinationAddress);
 
-        const actionButtons = !isCancelled
-          ? '<div class="staff-booking-actions">' +
-              '<button type="button" class="btn btn-secondary btn-sm on-way-btn" data-id="' + escapeHtml(item.id) + '" data-uid="' + escapeHtml(item.userId || '') + '" data-date="' + escapeHtml(item.dateText || item.isoDate) + '">Danine is onderweg</button>' +
-              '<span class="delay-inline-group">' +
-                '<input type="number" min="1" max="240" class="delay-min-input" value="' + defaultDelay + '" aria-label="Minuten vertraging" />' +
-                '<button type="button" class="btn btn-outline btn-sm delay-btn" data-id="' + escapeHtml(item.id) + '" data-uid="' + escapeHtml(item.userId || '') + '" data-date="' + escapeHtml(item.dateText || item.isoDate) + '">Vertraging melden</button>' +
-              '</span>' +
+        let actionButtons = '';
+        if (!isCancelled) {
+          actionButtons =
+            '<div class="staff-booking-actions">' +
+              '<button type="button" class="btn btn-secondary btn-sm toggle-route-btn" data-id="' + escapeHtml(item.id) + '">' +
+                (isRouteOpen ? '❌ Sluit route' : '🗺️ Start route (Google Maps)') +
+              '</button>' +
               '<button type="button" class="btn btn-danger staff-cancel-btn" data-id="' + escapeHtml(item.id) + '">Annuleer &amp; maak vrij</button>' +
-            '</div>'
-          : '';
+            '</div>';
+        }
+
+        let routePanelHtml = '';
+        if (!isCancelled && isRouteOpen) {
+          routePanelHtml =
+            '<div class="route-panel-box">' +
+              '<div class="route-panel-header">' +
+                '<div>' +
+                  '<strong>📍 Adres:</strong> ' + escapeHtml(fullDestinationAddress) +
+                '</div>' +
+                '<a href="' + mapsUrl + '" target="_blank" rel="noopener noreferrer" class="route-link-btn">🧭 Open in Google Maps</a>' +
+              '</div>' +
+              '<div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center; margin-top:0.35rem;">' +
+                '<button type="button" class="btn btn-sm on-way-btn" data-id="' + escapeHtml(item.id) + '" data-uid="' + escapeHtml(item.userId || '') + '" data-date="' + escapeHtml(item.dateText || item.isoDate) + '">🚀 Danine is onderweg</button>' +
+                '<div class="delay-inline-group">' +
+                  '<input type="number" min="1" max="240" class="delay-min-input" value="' + defaultDelay + '" aria-label="Minuten vertraging" />' +
+                  '<button type="button" class="btn btn-outline btn-sm delay-btn" data-id="' + escapeHtml(item.id) + '" data-uid="' + escapeHtml(item.userId || '') + '" data-date="' + escapeHtml(item.dateText || item.isoDate) + '">⏳ Meld vertraging</button>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+        }
 
         return (
           '<div class="item-box">' +
@@ -2161,9 +2219,22 @@
               '<div><strong>Adres:</strong> ' + escapeHtml(item.address || '-') + '</div>' +
               '<div><strong>Kinderen:</strong> ' + escapeHtml(item.kids || '-') + '</div>' +
             '</div>' +
+            routePanelHtml +
           '</div>'
         );
       }).join('');
+
+      container.querySelectorAll('.toggle-route-btn').forEach((btn) => {
+        btn.addEventListener('click', function () {
+          const bookingId = this.getAttribute('data-id');
+          if (activeRoutePanelBookingId === bookingId) {
+            activeRoutePanelBookingId = null;
+          } else {
+            activeRoutePanelBookingId = bookingId;
+          }
+          renderStaffBookings();
+        });
+      });
 
       container.querySelectorAll('.on-way-btn').forEach((btn) => {
         btn.addEventListener('click', async function () {
@@ -2177,7 +2248,7 @@
             await pushUserNotification(targetUid, 'Danine is onderweg voor je boeking op ' + dateLabel + '!');
           }
           this.disabled = false;
-          this.textContent = 'Onderweg gemeld';
+          this.textContent = '🚀 Danine is onderweg';
         });
       });
 
